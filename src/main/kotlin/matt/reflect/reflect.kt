@@ -54,7 +54,12 @@ fun testProtoTypeSucceeded(): Boolean {
 }
 
 private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStoringDefault {
-  Reflections.log = null
+  if (ismac()) {
+	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
+	  Reflections::class,
+	  null
+	)
+  }
   val skls = Reflections().getSubTypesOf(it.java)!!.map { it.kotlin }
   println(skls)
   skls
