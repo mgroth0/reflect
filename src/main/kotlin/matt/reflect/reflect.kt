@@ -5,10 +5,8 @@ import org.reflections8.Reflections
 import org.reflections8.scanners.SubTypesScanner
 import org.reflections8.util.ConfigurationBuilder
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.staticProperties
 
 
 val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
@@ -32,14 +30,14 @@ fun KClass<out Annotation>.annotatedKTypes() = annotatedJTypes().map { it.kotlin
 
 fun testProtoTypeSucceeded(): Boolean {
 
-  if (ismac()) {
-	/*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*/
-	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
+  /*  if (ismac()) {
+	  *//*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*//*
+	*//*(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
 	  Reflections::class,
 	  null
-	) /*this must be through reflection or the expression can't compile without slf4j jar on classpath*/
-	/*Reflections.log = null*/
-  }
+	)*//* *//*this must be through reflection or the expression can't compile without slf4j jar on classpath*//*
+	*//*Reflections.log = null*//*
+  }*/
 
 
 
@@ -56,12 +54,12 @@ fun testProtoTypeSucceeded(): Boolean {
 }
 
 private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStoringDefault {
-  if (ismac()) {
+  /*if (ismac()) {
 	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
 	  Reflections::class,
 	  null
 	)
-  }
+  }*/
   val skls =
 	  Reflections(
 		/*this wasnt neccesary on mac*/
