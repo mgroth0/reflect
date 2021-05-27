@@ -2,19 +2,20 @@ package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
 import org.reflections.Reflections
-import kotlin.contracts.ExperimentalContracts
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 
 
-val KClass<*>.hasNoArgsConstructor  // NOTE: straight from createInstance()
+val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
   get() = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) } != null
 
 
 @Target(AnnotationTarget.CLASS)
 annotation class ConstructedThroughReflection(val by: KClass<*>)
 
+
+fun ismac() = System.getProperty("os.name").startsWith("Mac")
 
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
@@ -25,11 +26,13 @@ fun KClass<out Annotation>.annotatedJTypes() = Reflections("matt").getTypesAnnot
 
 fun KClass<out Annotation>.annotatedKTypes() = annotatedJTypes().map { it.kotlin }
 
-@ExperimentalContracts
 fun testProtoTypeSucceeded(): Boolean {
 
-  /*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*/
-  Reflections.log = null
+  if (ismac()) {
+	/*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*/
+	Reflections.log = null
+  }
+
 
 
 
