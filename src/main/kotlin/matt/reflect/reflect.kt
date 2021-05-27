@@ -2,6 +2,8 @@ package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
 import org.reflections.Reflections
+import org.reflections.scanners.SubTypesScanner
+import org.reflections.util.ConfigurationBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
@@ -60,7 +62,12 @@ private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStori
 	  null
 	)
   }
-  val skls = Reflections().getSubTypesOf(it.java)!!.map { it.kotlin }
+  val skls =
+	  Reflections(
+		/*this wasnt neccesary on mac*/
+		ConfigurationBuilder().setScanners(SubTypesScanner())
+	  )
+		  .getSubTypesOf(it.java)!!.map { it.kotlin }
   println(skls)
   skls
 }
