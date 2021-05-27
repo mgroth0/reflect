@@ -3,8 +3,10 @@ package matt.reflect
 import matt.klib.dmap.withStoringDefault
 import org.reflections.Reflections
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.staticProperties
 
 
 val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
@@ -30,7 +32,11 @@ fun testProtoTypeSucceeded(): Boolean {
 
   if (ismac()) {
 	/*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*/
-	Reflections.log = null
+	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
+	  Reflections::class,
+	  null
+	) /*this must be through reflection or the expression can't compile without slf4j jar on classpath*/
+	/*Reflections.log = null*/
   }
 
 
