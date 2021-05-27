@@ -2,7 +2,12 @@
 
 dependencies {
   //  implementation(autoReflectionsJar.get())
-  implementation(autoReflectionsJar)
+  if (isMac) {
+	implementation(autoReflectionsJar)
+  } else {
+	implementation(libs.reflections)
+  }
+
   api(libs.kt.reflect)
   api(projects.klib)
 }
