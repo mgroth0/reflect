@@ -1,9 +1,9 @@
 package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
-import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
-import org.reflections.util.ConfigurationBuilder
+import org.reflections8.Reflections
+import org.reflections8.scanners.SubTypesScanner
+import org.reflections8.util.ConfigurationBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KParameter
