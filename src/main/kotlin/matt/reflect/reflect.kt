@@ -5,6 +5,7 @@ import org.reflections8.Reflections
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.isAccessible
 
 
 val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
@@ -75,7 +76,7 @@ fun <T: Any> KClass<T>.subclasses() = subclassCache[this] as List<KClass<out T>>
 fun Any.toStringBuilder(
   vararg props: KProperty<*>
 ): String {
-  return toStringBuilder(props.associate { it.name to it.getter.call() })
+  return toStringBuilder(props.associate { it.name to it.apply { isAccessible = true }.getter.call() })
 }
 
 fun Any.toStringBuilder(
