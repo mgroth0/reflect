@@ -15,8 +15,8 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 @Target(AnnotationTarget.CLASS)
 annotation class ConstructedThroughReflection(val by: KClass<*>)
 
-
-fun ismac() = System.getProperty("os.name").startsWith("Mac")
+val os: String get() = System.getProperty("os.name")
+fun ismac() = os.startsWith("Mac")
 
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
