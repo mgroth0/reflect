@@ -2,6 +2,8 @@ package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
 import org.reflections8.Reflections
+import kotlin.contracts.InvocationKind.AT_MOST_ONCE
+import kotlin.contracts.contract
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -17,6 +19,12 @@ annotation class ConstructedThroughReflection(val by: KClass<*>)
 
 val os: String get() = System.getProperty("os.name")
 fun ismac() = os.startsWith("Mac")
+inline fun onLinux(op: ()->Unit) {
+  contract {
+	callsInPlace(op, AT_MOST_ONCE)
+  }
+  if (!ismac()) op()
+}
 
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
