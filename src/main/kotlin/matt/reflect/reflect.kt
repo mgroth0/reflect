@@ -26,6 +26,13 @@ inline fun onLinux(op: ()->Unit) {
   if (!ismac()) op()
 }
 
+inline fun onMac(op: ()->Unit) {
+  contract {
+	callsInPlace(op, AT_MOST_ONCE)
+  }
+  if (ismac()) op()
+}
+
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
 
