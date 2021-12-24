@@ -2,6 +2,8 @@ package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
 import org.reflections8.Reflections
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import kotlin.contracts.InvocationKind.AT_MOST_ONCE
 import kotlin.contracts.contract
 import kotlin.reflect.KClass
@@ -19,6 +21,10 @@ annotation class ConstructedThroughReflection(val by: KClass<*>)
 
 val os: String get() = System.getProperty("os.name")
 fun ismac() = os.startsWith("Mac")
+fun isNewMac() = ismac() && run {
+    val proc = ProcessBuilder("uname", "-m").start()
+    BufferedReader(InputStreamReader(proc.inputStream)).readText()
+} == "arm64"
 inline fun onLinux(op: ()->Unit) {
   contract {
 	callsInPlace(op, AT_MOST_ONCE)
@@ -80,7 +86,7 @@ private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStori
 		/*ConfigurationBuilder().setScanners(SubTypesScanner())*/
 	  )
 		  .getSubTypesOf(it.java)!!.map { it.kotlin }
-  println(skls)
+  /*println(skls)*/
   skls
 }
 
