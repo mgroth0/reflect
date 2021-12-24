@@ -10,5 +10,8 @@ dependencies {
   implementation(libs.reflections8)
 
   api(libs.kt.reflect)
-  api(projects.klib)
+  /*api(projects.klib)*/
+  api(project(mapOf(
+    "path" to ":klib",
+    "configuration" to "jvmRuntimeElements")))
 }
