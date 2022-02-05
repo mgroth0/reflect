@@ -64,11 +64,11 @@ fun testProtoTypeSucceeded(): Boolean {
 
 
 
-
+  println("testing classes have hasNoArgsConstructor...")
 
     NoArgConstructor::class.annotatedKTypes()
             .forEach {
-                print("testing $it hasNoArgsConstructor... ")
+
                 if (!it.hasNoArgsConstructor) {
                     return false
                 }
