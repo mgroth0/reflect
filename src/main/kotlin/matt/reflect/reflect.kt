@@ -1,6 +1,8 @@
 package matt.reflect
 
 import matt.klib.dmap.withStoringDefault
+import matt.klib.log.debug
+import matt.klib.log.profile
 import org.reflections8.Reflections
 import org.reflections8.scanners.SubTypesScanner
 import org.reflections8.scanners.TypeAnnotationsScanner
@@ -82,13 +84,13 @@ fun testProtoTypeSucceeded(): Boolean {
   }*/
 
     val t = System.nanoTime()
-    println("testing classes have hasNoArgsConstructor...")
+    profile("testing classes have hasNoArgsConstructor...")
 
     val annotatedKTypes = NoArgConstructor::class.annotatedKTypes()
 
     var tt = System.nanoTime()
     var d = Duration.ofNanos(tt - t).toMillis()
-    println("getting annotatedKTypes took $d ms")
+    profile("getting annotatedKTypes took $d ms")
 
     annotatedKTypes.forEach {
         if (!it.hasNoArgsConstructor) {
@@ -97,13 +99,13 @@ fun testProtoTypeSucceeded(): Boolean {
     }
     tt = System.nanoTime()
     d = Duration.ofNanos(tt - t).toMillis()
-    println("test took $d ms")
+    profile("test took $d ms")
     return true
 }
 
 val reflections by lazy {
     val t = System.nanoTime()
-    println("getting Reflections...")
+    profile("getting Reflections...")
 
 
 
@@ -118,7 +120,7 @@ val reflections by lazy {
 
     var tt = System.nanoTime()
     var d = Duration.ofNanos(tt - t).toMillis()
-    println("getting Reflections took $d ms")
+    profile("getting Reflections took $d ms")
     r
 }
 
