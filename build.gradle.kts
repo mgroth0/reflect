@@ -10,6 +10,7 @@ dependencies {
   implementation(libs.reflections8)
 
   api(libs.kt.reflect)
+  api(projects.kj.kbuild)
   /*api(projects.klib)*/
   api(project(mapOf(
     "path" to ":klib",

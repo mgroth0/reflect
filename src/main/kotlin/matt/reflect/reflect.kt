@@ -1,5 +1,6 @@
 package matt.reflect
 
+import matt.kbuild.ismac
 import matt.klib.dmap.withStoringDefault
 import matt.klib.log.debug
 import matt.klib.log.profile
@@ -25,29 +26,9 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 @Target(AnnotationTarget.CLASS)
 annotation class ConstructedThroughReflection(val by: KClass<*>)
 
-enum class Machine {
-    OLD_MAC,
-    NEW_MAC,
-    WINDOWS
-}
-
-val thisMachine by lazy {
-    if (ismac) {
-        if (isNewMac) Machine.NEW_MAC else Machine.OLD_MAC
-    } else Machine.WINDOWS
-    // TODO: CHECK LINUX
-
-}
 
 
-val os: String by lazy { System.getProperty("os.name") }
-val ismac by lazy { os.startsWith("Mac") }
-val isNewMac by lazy {
-    ismac && run {
-        val proc = ProcessBuilder("uname", "-m").start()
-        BufferedReader(InputStreamReader(proc.inputStream)).readText().trim()
-    } == "arm64"
-}
+
 
 inline fun onLinux(op: () -> Unit) {
     contract {
