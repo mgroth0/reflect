@@ -1,18 +1,29 @@
 //import matt.gr/oovyland.autoReflectionsJar
 
+
+
 dependencies {
   //  implementation(autoReflectionsJar.get())
- /* if (isMac) {
-	implementation(autoReflectionsJar)
-  } else {
-	implementation(libs.reflections)
-  }*/
-  implementation(libs.reflections8)
+  /* if (isMac) {
+	 implementation(autoReflectionsJar)
+   } else {
+	 implementation(libs.reflections)
+   }*/
+  implementations(
+	libs.reflections8,
+	projects.kj.kjlib.lang
+  )
+
 
   api(libs.kt.reflect)
   api(projects.kj.kbuild)
   /*api(projects.klib)*/
-  api(project(mapOf(
-    "path" to ":k:klib",
-    "configuration" to "jvmRuntimeElements")))
+  api(
+	project(
+	  mapOf(
+		"path" to ":k:klib",
+		"configuration" to "jvmRuntimeElements"
+	  )
+	)
+  )
 }
