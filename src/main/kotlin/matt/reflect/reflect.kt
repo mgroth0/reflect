@@ -18,6 +18,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 
+annotation class TODO(val message: String)
 
 val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
     get() = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) } != null
