@@ -1,6 +1,6 @@
 package matt.reflect
 
-import matt.kjlib.lang.jlang.ismac
+import matt.klib.commons.ismac
 import matt.klib.dmap.withStoringDefault
 import matt.klib.log.debug
 import matt.klib.log.profile
