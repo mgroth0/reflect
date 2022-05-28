@@ -16,7 +16,7 @@ dependencies {
 
 
   api(libs.kt.reflect)
-  api(projects.kj.kbuild)
+//  api(projects.kj.kbuild)
   /*api(projects.klib)*/
   api(
 	project(
