@@ -2,17 +2,13 @@ package matt.reflect
 
 import matt.klib.commons.ismac
 import matt.klib.dmap.withStoringDefault
-import matt.klib.log.debug
 import matt.klib.log.profile
 import org.reflections8.Reflections
-import org.reflections8.scanners.SubTypesScanner
-import org.reflections8.scanners.TypeAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.time.Duration
 import kotlin.contracts.InvocationKind.AT_MOST_ONCE
 import kotlin.contracts.contract
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -153,4 +149,13 @@ fun Any.toStringBuilder(
         it.key + "=" + it.value
             .toString()
     } + (if (map.isNotEmpty()) " ]" else "]")
+}
+
+
+fun <V: Any?, R: Any?> KProperty<V>.access(op: KCallable<V>.()->R): R {
+    val oldAccessible = this.isAccessible
+    isAccessible = true
+    val r = op(this)
+    isAccessible = oldAccessible
+    return r
 }
