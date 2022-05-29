@@ -17,6 +17,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.kotlinFunction
 
 annotation class TODO(val message: String)
 
@@ -54,16 +55,24 @@ fun KClass<out Annotation>.annotatedJTypes() = reflections.getTypesAnnotatedWith
 
 fun KClass<out Annotation>.annotatedKTypes() = annotatedJTypes().map { it.kotlin }
 
-fun testProtoTypeSucceeded(): Boolean {
+fun KClass<out Annotation>.annotatedJFunctions() = reflections.getMethodsAnnotatedWith(
+    this.java
+)!!
+fun KClass<out Annotation>.annotatedKFunctions() = annotatedJFunctions().map { it.kotlinFunction }
 
-    /*  if (ismac()) {
-        *//*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*//*
-	*//*(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
+
+/*fun testProtoTypeSucceeded(): Boolean {
+
+
+
+    *//*  if (ismac()) {
+        *//**//*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*//**//*
+	*//**//*(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
 	  Reflections::class,
 	  null
-	)*//* *//*this must be through reflection or the expression can't compile without slf4j jar on classpath*//*
-	*//*Reflections.log = null*//*
-  }*/
+	)*//**//* *//**//*this must be through reflection or the expression can't compile without slf4j jar on classpath*//**//*
+	*//**//*Reflections.log = null*//**//*
+  }*//*
 
     val t = System.nanoTime()
     profile("testing classes have hasNoArgsConstructor...")
@@ -83,7 +92,7 @@ fun testProtoTypeSucceeded(): Boolean {
     d = Duration.ofNanos(tt - t).toMillis()
     profile("test took $d ms")
     return true
-}
+}*/
 
 val reflections by lazy {
     val t = System.nanoTime()
