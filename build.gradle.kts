@@ -1,5 +1,5 @@
 //import matt.gr/oovyland.autoReflectionsJar
-import matt.kbuild.implementations
+import matt.kbuild.shortcuts.implementations
 
 
 dependencies {
