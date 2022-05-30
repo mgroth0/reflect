@@ -1,5 +1,6 @@
 //import matt.gr/oovyland.autoReflectionsJar
 import matt.kbuild.shortcuts.implementations
+import matt.klib.str.upper
 
 
 dependencies {
@@ -18,12 +19,11 @@ dependencies {
   api(libs.kt.reflect)
 //  api(projects.kj.kbuild)
   /*api(projects.klib)*/
-  api(
-	project(
-	  mapOf(
-		"path" to ":k:klib",
-		"configuration" to "jvmRuntimeElements"
-	  )
-	)
-  )
+  if (rootDir.name.upper() == "FLOW") {
+	api(project(":k:klib")) {
+	  targetConfiguration = "jvmRuntimeElements"
+	}
+  } else {
+	api("matt.k:klib:+")
+  }
 }
