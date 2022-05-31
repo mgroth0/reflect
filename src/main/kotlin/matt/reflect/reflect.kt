@@ -1,8 +1,9 @@
 package matt.reflect
 
-import matt.klib.commons.ismac
+import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.log.profile
+import matt.klib.sys.Mac
 import org.reflections8.Reflections
 import org.reflections8.util.ConfigurationBuilder
 import java.time.Duration
@@ -32,14 +33,14 @@ inline fun onLinux(op: () -> Unit) {
     contract {
         callsInPlace(op, AT_MOST_ONCE)
     }
-    if (!ismac) op()
+    if (thisMachine !is Mac) op()
 }
 
 inline fun onMac(op: () -> Unit) {
     contract {
         callsInPlace(op, AT_MOST_ONCE)
     }
-    if (ismac) op()
+    if (thisMachine is Mac) op()
 }
 
 @Target(AnnotationTarget.CLASS)
