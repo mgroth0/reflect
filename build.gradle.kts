@@ -1,7 +1,7 @@
 
 
 //import matt.gr/oovyland.autoReflectionsJar
-import matt.kbuild.shortcuts.implementations
+import matt.kbuild.gbuild.shortcuts.implementations
 import matt.klib.str.upper
 modtype = LIB
 
