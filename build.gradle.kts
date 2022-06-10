@@ -13,9 +13,10 @@ dependencies {
    }*/
   implementations(
 	libs.reflections8,
-	projects.kj.kjlib.lang
+//	projects.kj.kjlib.lang
   )
 
+  projectOrLocalMavenJVM("api", ":k:klib")
 
   api(libs.kt.reflect)
 //  api(projects.kj.kbuild)
