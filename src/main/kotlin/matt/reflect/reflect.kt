@@ -16,7 +16,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
-class NeedClassToShowThisDepIsBeingUsed()
+class NeedClassToShowThisDepIsBeingUsed(val s: String)
 
 annotation class TODO(val message: String = "todo")
 
