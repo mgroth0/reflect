@@ -16,6 +16,8 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
+class NeedClassToShowThisDepIsBeingUsed()
+
 annotation class TODO(val message: String = "todo")
 
 val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
