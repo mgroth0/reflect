@@ -5,7 +5,7 @@ import matt.klib.str.upper
 modtype = LIB
 
 apis(
-  project(":k:klib")
+  ":k:klib".jvm()
 )
 
 dependencies {
@@ -25,11 +25,11 @@ dependencies {
   api(libs.kt.reflect)
 //  api(projects.kj.kbuild)
   /*api(projects.klib)*/
-  if (rootDir.name.upper() == "FLOW") {
-	api(project(":k:klib")) {
-	  targetConfiguration = "jvmRuntimeElements"
-	}
-  } else {
-	api("matt.k:klib:+")
-  }
+//  if (rootDir.name.upper() == "FLOW") {
+//	api(project(":k:klib")) {
+//	  targetConfiguration = "jvmRuntimeElements"
+//	}
+//  } else {
+//	api("matt.k:klib:+")
+//  }
 }
