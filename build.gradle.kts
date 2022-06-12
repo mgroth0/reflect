@@ -4,6 +4,10 @@
 import matt.klib.str.upper
 modtype = LIB
 
+apis(
+  project(":k:klib")
+)
+
 dependencies {
   //  implementation(autoReflectionsJar.get())
   /* if (isMac) {
@@ -16,7 +20,7 @@ dependencies {
 //	projects.kj.kjlib.lang
   )
 
-  projectOrLocalMavenJVM("api", ":k:klib")
+
 
   api(libs.kt.reflect)
 //  api(projects.kj.kbuild)
