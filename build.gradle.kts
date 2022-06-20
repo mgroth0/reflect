@@ -17,13 +17,13 @@ dependencies {
    }*/
   implementations(
 	libs.reflections8,
-//	projects.kj.kjlib.lang
+//	projects.k.kjlib.lang
   )
 
 
 
   api(libs.kt.reflect)
-//  api(projects.kj.kbuild)
+//  api(projects.k.kbuild)
   /*api(projects.klib)*/
 //  if (rootDir.name.upper() == "FLOW") {
 //	api(project(":k:klib")) {
