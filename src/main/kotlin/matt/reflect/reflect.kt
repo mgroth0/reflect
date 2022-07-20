@@ -3,6 +3,7 @@ package matt.reflect
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.log.profile
+import matt.klib.sys.Linux
 import matt.klib.sys.Mac
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
@@ -15,7 +16,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.allSuperclasses
-import kotlin.reflect.jvm.internal.impl.load.kotlin.KotlinJvmBinaryClass.MethodAnnotationVisitor
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -31,19 +31,6 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 annotation class ConstructedThroughReflection(val by: KClass<*>)
 
 
-inline fun onLinux(op: ()->Unit) {
-  contract {
-	callsInPlace(op, AT_MOST_ONCE)
-  }
-  if (thisMachine !is Mac) op()
-}
-
-inline fun onMac(op: ()->Unit) {
-  contract {
-	callsInPlace(op, AT_MOST_ONCE)
-  }
-  if (thisMachine is Mac) op()
-}
 
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
