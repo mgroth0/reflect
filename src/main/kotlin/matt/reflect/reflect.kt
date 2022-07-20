@@ -2,6 +2,7 @@ package matt.reflect
 
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
+import matt.klib.lang.inlined
 import matt.klib.log.profile
 import matt.klib.sys.Linux
 import matt.klib.sys.Mac
@@ -157,5 +158,11 @@ fun <V: Any?, R: Any?> KProperty<V>.access(op: KCallable<V>.()->R): R {
   isAccessible = oldAccessible
   return r
 }
+
+
+
+
+
+
 
 
