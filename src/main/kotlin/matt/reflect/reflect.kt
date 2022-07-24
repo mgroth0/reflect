@@ -163,3 +163,7 @@ fun <V: Any?, R: Any?> KProperty<V>.access(op: KCallable<V>.()->R): R {
 fun KProperty0<*>.accessAndGetDelegate() = access {
   this@accessAndGetDelegate.getDelegate()
 }
+
+fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
+  this@accessAndGetDelegate.getDelegate(receiver)
+}
