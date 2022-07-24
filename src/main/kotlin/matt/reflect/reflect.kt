@@ -16,6 +16,8 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
@@ -30,7 +32,6 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 
 @Target(AnnotationTarget.CLASS)
 annotation class ConstructedThroughReflection(val by: KClass<*>)
-
 
 
 @Target(AnnotationTarget.CLASS)
@@ -159,10 +160,6 @@ fun <V: Any?, R: Any?> KProperty<V>.access(op: KCallable<V>.()->R): R {
   return r
 }
 
-
-
-
-
-
-
-
+fun KProperty0<*>.accessAndGetDelegate() = access {
+  this@accessAndGetDelegate.getDelegate()
+}
