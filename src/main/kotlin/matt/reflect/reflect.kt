@@ -2,6 +2,7 @@ package matt.reflect
 
 import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
+import matt.klib.lang.RUNTIME
 import matt.klib.lang.inlined
 import matt.klib.log.profile
 import matt.klib.sys.Linux
@@ -93,7 +94,7 @@ val reflections by lazy {
 
   val r = Reflections(
 	ConfigurationBuilder()
-	  .useParallelExecutor(Runtime.getRuntime().availableProcessors())
+	  .useParallelExecutor(RUNTIME.availableProcessors())
 	  .forPackages("matt")
 
 	  .addScanners(MethodAnnotationsScanner())
