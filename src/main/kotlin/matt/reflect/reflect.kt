@@ -1,18 +1,12 @@
 package matt.reflect
 
-import matt.klib.commons.thisMachine
 import matt.klib.dmap.withStoringDefault
 import matt.klib.lang.RUNTIME
-import matt.klib.lang.inlined
 import matt.klib.log.profile
-import matt.klib.sys.Linux
-import matt.klib.sys.Mac
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.time.Duration
-import kotlin.contracts.InvocationKind.AT_MOST_ONCE
-import kotlin.contracts.contract
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -168,3 +162,4 @@ fun KProperty0<*>.accessAndGetDelegate() = access {
 fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
   this@accessAndGetDelegate.getDelegate(receiver)
 }
+
