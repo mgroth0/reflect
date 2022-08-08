@@ -7,7 +7,6 @@ import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.time.Duration
-import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
@@ -147,7 +146,7 @@ fun Any.toStringBuilder(
 }
 
 
-fun <V: Any?, R: Any?> KProperty<V>.access(op: KCallable<V>.()->R): R {
+fun <V: Any?, R: Any?> KProperty<V>.access(op: KProperty<V>.()->R): R {
   val oldAccessible = this.isAccessible
   isAccessible = true
   val r = op(this)
