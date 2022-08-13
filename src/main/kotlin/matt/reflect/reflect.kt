@@ -6,6 +6,7 @@ import matt.klib.log.profile
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
+import java.lang.reflect.Method
 import java.time.Duration
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
@@ -31,13 +32,13 @@ annotation class ConstructedThroughReflection(val by: KClass<*>)
 @Target(AnnotationTarget.CLASS)
 annotation class NoArgConstructor
 
-fun KClass<out Annotation>.annotatedJTypes() = reflections.getTypesAnnotatedWith(
+fun KClass<out Annotation>.annotatedJTypes(): MutableSet<Class<*>> = reflections.getTypesAnnotatedWith(
   this.java
 )!!
 
-fun KClass<out Annotation>.annotatedKTypes() = annotatedJTypes().map { it.kotlin }
+fun KClass<out Annotation>.annotatedKTypes(): List<KClass<out Any>> = annotatedJTypes().map { it.kotlin }
 
-fun KClass<out Annotation>.annotatedJFunctions() = reflections.getMethodsAnnotatedWith(
+fun KClass<out Annotation>.annotatedJFunctions(): MutableSet<Method> = reflections.getMethodsAnnotatedWith(
   this.java
 )!!
 
