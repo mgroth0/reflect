@@ -9,6 +9,7 @@ import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
 import java.time.Duration
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
@@ -146,6 +147,13 @@ fun Any.toStringBuilder(
   } + (if (map.isNotEmpty()) " ]" else "]")
 }
 
+fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
+  val oldAccessible = this.isAccessible
+  isAccessible = true
+  val r = op(this)
+  isAccessible = oldAccessible
+  return r
+}
 
 fun <V: Any?, R: Any?> KProperty<V>.access(op: KProperty<V>.()->R): R {
   val oldAccessible = this.isAccessible
