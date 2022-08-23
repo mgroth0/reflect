@@ -4,17 +4,17 @@
     },
     "dependencies": [
         {
-            "type": "matt.mstruct.BuildJsonProjectDependency",
+            "type": "matt.mstruct.bj.BuildJsonProjectDependency",
             "cfg": "api",
             "path": ":k:klib"
         },
         {
-            "type": "matt.mstruct.BuildJsonLibDependency",
+            "type": "matt.mstruct.bj.BuildJsonLibDependency",
             "cfg": "api",
             "key": "kt-reflect"
         },
         {
-            "type": "matt.mstruct.BuildJsonLibDependency",
+            "type": "matt.mstruct.bj.BuildJsonLibDependency",
             "cfg": "implementation",
             "key": "reflections8"
         }
