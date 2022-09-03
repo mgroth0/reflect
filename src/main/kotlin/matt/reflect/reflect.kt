@@ -1,6 +1,6 @@
 package matt.reflect
 
-import matt.klib.dmap.withStoringDefault
+import matt.collect.dmap.withStoringDefault
 import matt.lang.RUNTIME
 import matt.klib.log.profile
 import org.reflections8.Reflections
