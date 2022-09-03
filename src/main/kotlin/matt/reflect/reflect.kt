@@ -2,7 +2,7 @@ package matt.reflect
 
 import matt.collect.dmap.withStoringDefault
 import matt.lang.RUNTIME
-import matt.klib.log.profile
+import matt.log.profile
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
