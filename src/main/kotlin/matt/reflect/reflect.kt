@@ -123,29 +123,7 @@ private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStori
 fun <T: Any> KClass<T>.subclasses() = subclassCache[this] as List<KClass<out T>>
 
 
-fun Any.toStringBuilder(
-  vararg props: KProperty<*>
-): String {
-  return toStringBuilder(
-	props.associate {
-	  it.name to it.apply { isAccessible = true }.getter.call()
-	})
-}
 
-fun Any.toStringBuilder(
-  vararg kvPairs: Pair<String, Any?>
-) = toStringBuilder(mapOf(*kvPairs))
-
-fun KClass<*>.firstSimpleName() = this.simpleName ?: this.allSuperclasses.first().simpleName
-
-fun Any.toStringBuilder(
-  map: Map<String, Any?>
-): String {
-  return "[ " + this::class.firstSimpleName() + " " + map.entries.joinToString {
-	it.key + "=" + it.value
-	  .toString()
-  } + (if (map.isNotEmpty()) " ]" else "]")
-}
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
   val oldAccessible = this.isAccessible
