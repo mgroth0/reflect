@@ -2,7 +2,7 @@ package matt.reflect
 
 import matt.collect.dmap.withStoringDefault
 import matt.lang.RUNTIME
-import matt.log.profile
+import matt.log.debug
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
@@ -14,7 +14,6 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -84,7 +83,7 @@ val reflections by lazy {
 
 
 
-  profile("getting Reflections...")
+  debug("getting Reflections...")
 
 
   val r = Reflections(
@@ -101,7 +100,7 @@ val reflections by lazy {
 
   var tt = System.nanoTime()
   var d = Duration.ofNanos(tt - t).toMillis()
-  profile("getting Reflections took $d ms")
+  debug("getting Reflections took $d ms")
   r
 }
 
@@ -121,8 +120,6 @@ private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStori
 
 @Suppress("UNCHECKED_CAST")
 fun <T: Any> KClass<T>.subclasses() = subclassCache[this] as List<KClass<out T>>
-
-
 
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
