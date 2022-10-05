@@ -2,6 +2,7 @@
 package matt.reflect
 
 import matt.collect.dmap.withStoringDefault
+import matt.collect.itr.recurse.recurse
 import matt.lang.RUNTIME
 import matt.log.debug
 import org.reflections8.Reflections
