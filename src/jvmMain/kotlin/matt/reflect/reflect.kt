@@ -1,3 +1,4 @@
+@file:JvmName("ReflectJvmKt")
 package matt.reflect
 
 import matt.collect.dmap.withStoringDefault
@@ -14,6 +15,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -146,3 +148,14 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
   this@accessAndGetDelegate.getDelegate(receiver)
 }
 
+
+
+actual fun classForName(qualifiedName: String): KClass<*>? {
+  return try {
+    Class.forName(qualifiedName).kotlin
+  } catch (e: ClassNotFoundException) {
+    null
+  }
+}
+
+actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)

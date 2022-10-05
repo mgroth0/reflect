@@ -1,24 +1,24 @@
 {
-  "type" :         "matt.mstruct.bj.LIBModule",
+  "type" :         "matt.mstruct.bj.NO_NATIVEModule",
   "dependencies" : [
 	{
 	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
-	  "cfg" :  "api",
+	  "cfg" :  "jvmMainApi",
 	  "key" :  "kt-reflect"
 	},
 	{
 	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
-	  "cfg" :  "api",
+	  "cfg" :  "commonMainApi",
 	  "path" : ":k:collect"
 	},
 	{
 	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
-	  "cfg" :  "implementation",
+	  "cfg" :  "jvmMainImplementation",
 	  "key" :  "reflections8"
 	},
 	{
 	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
-	  "cfg" :  "api",
+	  "cfg" :  "jvmMainApi",
 	  "path" : ":k:log"
 	}
   ],
