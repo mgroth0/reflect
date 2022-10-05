@@ -1,4 +1,5 @@
 @file:JvmName("ReflectJvmKt")
+
 package matt.reflect
 
 import matt.collect.dmap.withStoringDefault
@@ -20,7 +21,7 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.kotlinFunction
 
-class NeedClassToShowThisDepIsBeingUsed(val s: String)
+object YesIUseReflect
 
 annotation class TODO(val message: String = "todo")
 
@@ -150,12 +151,11 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 }
 
 
-
 actual fun classForName(qualifiedName: String): KClass<*>? {
   return try {
-    Class.forName(qualifiedName).kotlin
+	Class.forName(qualifiedName).kotlin
   } catch (e: ClassNotFoundException) {
-    null
+	null
   }
 }
 
@@ -167,3 +167,5 @@ fun <T: Any> KClass<out T>.recurseSealedClasses() = recurse {
 }
 
 fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectInstance }.toList()
+
+
