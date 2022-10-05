@@ -104,8 +104,9 @@ val reflections by lazy {
 private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>()/*.withStoringDefault {
 }*/
 
-@Synchronized fun <T: Any> KClass<T>.subclasses(): List<KClass<*>> {
-  return subclassCache[this] ?: run {
+@Synchronized fun <T: Any> KClass<T>.subclasses(): List<KClass<out T>> {
+  @Suppress("UNCHECKED_CAST")
+  return (subclassCache[this] ?: run {
 	/*if (ismac()) {
 	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
 	  Reflections::class,
@@ -117,7 +118,7 @@ private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>()/*.withSto
 	  .getSubTypesOf(java)!!.map { it.kotlin }/*println(skls)*/
 	subclassCache[this] = skls
 	skls
-  } as List<KClass<out T>>
+  }) as List<KClass<out T>>
 }
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
