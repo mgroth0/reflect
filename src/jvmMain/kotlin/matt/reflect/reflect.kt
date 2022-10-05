@@ -159,3 +159,10 @@ actual fun classForName(qualifiedName: String): KClass<*>? {
 }
 
 actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)
+
+
+fun <T: Any> KClass<out T>.recurseSealedClasses() = recurse {
+  it.sealedSubclasses
+}
+
+fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectInstance }.toList()
