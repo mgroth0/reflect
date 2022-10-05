@@ -2,8 +2,6 @@
 
 package matt.reflect
 
-import matt.collect.dmap.withStoringDefault
-import matt.collect.itr.recurse.recurse
 import matt.lang.RUNTIME
 import matt.log.debug
 import org.reflections8.Reflections
@@ -29,12 +27,10 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
   get() = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) } != null
 
 
-@Target(AnnotationTarget.CLASS)
-annotation class ConstructedThroughReflection(val by: KClass<*>)
+@Target(AnnotationTarget.CLASS) annotation class ConstructedThroughReflection(val by: KClass<*>)
 
 
-@Target(AnnotationTarget.CLASS)
-annotation class NoArgConstructor
+@Target(AnnotationTarget.CLASS) annotation class NoArgConstructor
 
 fun KClass<out Annotation>.annotatedJTypes(): MutableSet<Class<*>> = reflections.getTypesAnnotatedWith(
   this.java
@@ -91,15 +87,12 @@ val reflections by lazy {
 
 
   val r = Reflections(
-	ConfigurationBuilder()
-	  .useParallelExecutor(RUNTIME.availableProcessors())
-	  .forPackages("matt")
+	ConfigurationBuilder().useParallelExecutor(RUNTIME.availableProcessors()).forPackages("matt")
 
 	  .addScanners(MethodAnnotationsScanner())
 
 	//            .setScanners(TypeAnnotationsScanner(),SubTypesScanner())
-	/*this wasnt neccesary on mac*/
-	/*ConfigurationBuilder().setScanners(SubTypesScanner())*/
+	/*this wasnt neccesary on mac*/    /*ConfigurationBuilder().setScanners(SubTypesScanner())*/
   )
 
   var tt = System.nanoTime()
@@ -108,23 +101,24 @@ val reflections by lazy {
   r
 }
 
-private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>().withStoringDefault {
-  /*if (ismac()) {
+private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>()/*.withStoringDefault {
+}*/
+
+@Synchronized fun <T: Any> KClass<T>.subclasses(): List<KClass<*>> {
+  return subclassCache[this] ?: run {
+	/*if (ismac()) {
 	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
 	  Reflections::class,
 	  null
 	)
   }*/
-  val skls = reflections
 
-	.getSubTypesOf(it.java)!!.map { it.kotlin }
-  /*println(skls)*/
-  skls
+	val skls = reflections
+	  .getSubTypesOf(java)!!.map { it.kotlin }/*println(skls)*/
+	subclassCache[this] = skls
+	skls
+  } as List<KClass<out T>>
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <T: Any> KClass<T>.subclasses() = subclassCache[this] as List<KClass<out T>>
-
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
   val oldAccessible = this.isAccessible
@@ -162,8 +156,11 @@ actual fun classForName(qualifiedName: String): KClass<*>? {
 actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)
 
 
-fun <T: Any> KClass<out T>.recurseSealedClasses() = recurse {
-  it.sealedSubclasses
+fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = sequence<KClass<out T>> {
+  yield(this@recurseSealedClasses)
+  sealedSubclasses.forEach {
+	yieldAll(it.recurseSealedClasses())
+  }
 }
 
 fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectInstance }.toList()
