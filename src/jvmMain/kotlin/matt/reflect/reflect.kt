@@ -26,15 +26,9 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 
 @Target(AnnotationTarget.CLASS) annotation class NoArgConstructor
 
-fun KClass<out Annotation>.annotatedJTypes(): MutableSet<Class<*>> = reflections.getTypesAnnotatedWith(
-  this.java
-)!!
 
 fun KClass<out Annotation>.annotatedKTypes(): List<KClass<out Any>> = annotatedJTypes().map { it.kotlin }
 
-fun KClass<out Annotation>.annotatedJFunctions(): MutableSet<Method> = reflections.getMethodsAnnotatedWith(
-  this.java
-)!!
 
 fun KClass<out Annotation>.annotatedKFunctions() = annotatedJFunctions().map { it.kotlinFunction }
 
