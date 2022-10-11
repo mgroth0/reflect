@@ -4,7 +4,6 @@ package matt.reflect
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
@@ -15,9 +14,10 @@ object YesIUseReflect
 
 annotation class TODO(val message: String = "todo")
 
-val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
-  get() = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) } != null
-
+val KClass<*>.hasNoArgsConstructor
+  get() = noArgConstructor != null
+/*straight from createInstance()*/
+val KClass<*>.noArgConstructor get() = constructors.singleOrNull { it.parameters.all(kotlin.reflect.KParameter::isOptional) }
 
 @Target(AnnotationTarget.CLASS) annotation class ConstructedThroughReflection(val by: KClass<*>)
 
