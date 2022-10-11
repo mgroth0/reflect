@@ -15,11 +15,6 @@
 	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
 	  "cfg" :  "jvmMainImplementation",
 	  "key" :  "reflections8"
-	},
-	{
-	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
-	  "cfg" :  "jvmMainApi",
-	  "path" : ":k:log"
 	}
   ],
   "note" :         null
