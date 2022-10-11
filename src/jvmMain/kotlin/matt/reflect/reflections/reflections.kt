@@ -22,8 +22,9 @@ fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> = defaultMattCon
   .reflection()
   .getTypesAnnotationWith(this)
 
+@Synchronized fun <T: Any> KClass<T>.mattSubClasses() = subclasses(MATT_PACK)
 
-@Synchronized fun <T: Any> KClass<T>.subclasses(pack: String? = null): List<KClass<out T>> {
+@Synchronized fun <T: Any> KClass<T>.subclasses(pack: String): List<KClass<out T>> {
   val searchParams = if (pack != null) SubClassSearchParams(this, pack) else SubClassSearchParams(this)
   @Suppress("UNCHECKED_CAST") return (subclassCache[searchParams] ?: run {
 	val cfg = if (pack != null) ReflectionConfig(pack) else ReflectionConfig()
