@@ -8,12 +8,17 @@ import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
 import java.time.Duration
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.kotlinFunction
+
+fun KClass<out Annotation>.annotatedMattKTypes(): List<KClass<out Any>> = annotatedMattJTypes().map { it.kotlin }
+
+fun KClass<out Annotation>.annotatedMattKFunctions() = annotatedMattJFunctions().map { it.kotlinFunction }
 
 fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> =
   methodScanningMattConfig.reflection().getMethodsWithAnnotation(this)!!
 
 
-fun KClass<out Annotation>.annotatedMattTypes(): List<KClass<*>> = defaultMattConfig
+fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> = defaultMattConfig
   .reflection()
   .getTypesAnnotationWith(this)
 
@@ -77,7 +82,7 @@ private class Reflection(
 
   fun getTypesAnnotationWith(cls: KClass<out Annotation>) = reflections.getTypesAnnotatedWith(
 	cls.java
-  ).map { it.kotlin }
+  )
 
 }
 

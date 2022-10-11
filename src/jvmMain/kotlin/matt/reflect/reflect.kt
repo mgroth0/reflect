@@ -2,7 +2,6 @@
 
 package matt.reflect
 
-import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -11,7 +10,6 @@ import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.kotlinFunction
 
 object YesIUseReflect
 
@@ -27,10 +25,7 @@ val KClass<*>.hasNoArgsConstructor  /*straight from createInstance()*/
 @Target(AnnotationTarget.CLASS) annotation class NoArgConstructor
 
 
-fun KClass<out Annotation>.annotatedKTypes(): List<KClass<out Any>> = annotatedJTypes().map { it.kotlin }
 
-
-fun KClass<out Annotation>.annotatedKFunctions() = annotatedJFunctions().map { it.kotlinFunction }
 
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
