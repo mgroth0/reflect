@@ -2,13 +2,7 @@
 
 package matt.reflect
 
-import matt.lang.RUNTIME
-import matt.log.debug
-import org.reflections8.Reflections
-import org.reflections8.scanners.MethodAnnotationsScanner
-import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
-import java.time.Duration
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -44,82 +38,6 @@ fun KClass<out Annotation>.annotatedJFunctions(): MutableSet<Method> = reflectio
 
 fun KClass<out Annotation>.annotatedKFunctions() = annotatedJFunctions().map { it.kotlinFunction }
 
-
-/*fun testProtoTypeSucceeded(): Boolean {
-
-
-
-    *//*  if (ismac()) {
-        *//**//*I should re-enable this useful logging at some point. It takes like a full second and I could optimize its usage.*//**//*
-	*//**//*(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
-	  Reflections::class,
-	  null
-	)*//**//* *//**//*this must be through reflection or the expression can't compile without slf4j jar on classpath*//**//*
-	*//**//*Reflections.log = null*//**//*
-  }*//*
-
-    val t = System.nanoTime()
-    profile("testing classes have hasNoArgsConstructor...")
-
-    val annotatedKTypes = NoArgConstructor::class.annotatedKTypes()
-
-    var tt = System.nanoTime()
-    var d = Duration.ofNanos(tt - t).toMillis()
-    profile("getting annotatedKTypes took $d ms")
-
-    annotatedKTypes.forEach {
-        if (!it.hasNoArgsConstructor) {
-            return false
-        }
-    }
-    tt = System.nanoTime()
-    d = Duration.ofNanos(tt - t).toMillis()
-    profile("test took $d ms")
-    return true
-}*/
-
-val reflections by lazy {
-  val t = System.nanoTime()
-
-
-
-  debug("getting Reflections...")
-
-
-  val r = Reflections(
-	ConfigurationBuilder().useParallelExecutor(RUNTIME.availableProcessors()).forPackages("matt")
-
-	  .addScanners(MethodAnnotationsScanner())
-
-	//            .setScanners(TypeAnnotationsScanner(),SubTypesScanner())
-	/*this wasnt neccesary on mac*/    /*ConfigurationBuilder().setScanners(SubTypesScanner())*/
-  )
-
-  var tt = System.nanoTime()
-  var d = Duration.ofNanos(tt - t).toMillis()
-  debug("getting Reflections took $d ms")
-  r
-}
-
-private val subclassCache = mutableMapOf<KClass<*>, List<KClass<*>>>()/*.withStoringDefault {
-}*/
-
-@Synchronized fun <T: Any> KClass<T>.subclasses(): List<KClass<out T>> {
-  @Suppress("UNCHECKED_CAST")
-  return (subclassCache[this] ?: run {
-	/*if (ismac()) {
-	(Reflections::class.staticProperties.first { it.name == "log" } as KMutableProperty<*>).setter.call(
-	  Reflections::class,
-	  null
-	)
-  }*/
-
-	val skls = reflections
-	  .getSubTypesOf(java)!!.map { it.kotlin }/*println(skls)*/
-	subclassCache[this] = skls
-	skls
-  }) as List<KClass<out T>>
-}
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
   val oldAccessible = this.isAccessible
