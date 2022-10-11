@@ -12,7 +12,7 @@ import kotlin.reflect.jvm.isAccessible
 
 object YesIUseReflect
 
-annotation class TODO(val message: String = "todo")
+annotation class TODO(val message: String = "matt.log.todo.todo")
 
 val KClass<*>.hasNoArgsConstructor
   get() = noArgConstructor != null
