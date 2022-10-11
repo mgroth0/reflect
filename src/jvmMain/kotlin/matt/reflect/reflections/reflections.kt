@@ -1,12 +1,10 @@
 package matt.reflect.reflections
 
 import matt.lang.RUNTIME
-import matt.log.debug
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
-import java.time.Duration
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -55,8 +53,8 @@ private class Reflection(
   cfg: ReflectionConfig,
 ) {
   private val reflections by lazy {
-	val t = System.nanoTime()
-	debug("getting Reflections...")
+	/*val t = System.nanoTime()
+	debug("getting Reflections...")*/
 
 	var config = ConfigurationBuilder().useParallelExecutor(RUNTIME.availableProcessors())
 	if (cfg.scanMethodAnnotations) {
@@ -69,9 +67,9 @@ private class Reflection(
 	val r = Reflections(config)
 
 
-	val tt = System.nanoTime()
+	/*val tt = System.nanoTime()
 	val d = Duration.ofNanos(tt - t).toMillis()
-	debug("getting Reflections took $d ms")
+	debug("getting Reflections took $d ms")*/
 	r
   }
 
