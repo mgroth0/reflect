@@ -6,7 +6,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
 
 
-class SomeTests {
+actual class SomeTests {
 
   @Test
   @ExperimentalContracts
