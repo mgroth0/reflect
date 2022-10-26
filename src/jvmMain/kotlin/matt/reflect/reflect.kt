@@ -16,16 +16,19 @@ annotation class TODO(val message: String = "matt.log.todo.todo")
 
 val KClass<*>.hasNoArgsConstructor
   get() = noArgConstructor != null
+
 /*straight from createInstance()*/
-val KClass<*>.noArgConstructor get() = constructors.singleOrNull { it.parameters.all(kotlin.reflect.KParameter::isOptional) }
+val KClass<*>.noArgConstructor
+  get() = constructors.singleOrNull {
+	it.parameters.all(
+	  kotlin.reflect.KParameter::isOptional
+	)
+  }
 
 @Target(AnnotationTarget.CLASS) annotation class ConstructedThroughReflection(val by: KClass<*>)
 
 
 @Target(AnnotationTarget.CLASS) annotation class NoArgConstructor
-
-
-
 
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
@@ -53,7 +56,7 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 }
 
 
-actual fun classForName(qualifiedName: String): KClass<*>? {
+actual fun classForNameImpl(qualifiedName: String): KClass<*>? {
   return try {
 	Class.forName(qualifiedName).kotlin
   } catch (e: ClassNotFoundException) {

@@ -2,6 +2,11 @@ package matt.reflect
 
 import kotlin.reflect.KClass
 
-expect fun classForName(qualifiedName: String): KClass<*>?
+fun classForName(qualifiedName: String): KClass<*>? = when (qualifiedName) {
+  "kotlin.String" -> String::class
+  else            -> classForNameImpl(qualifiedName)
+}
+
+internal expect fun classForNameImpl(qualifiedName: String): KClass<*>?
 
 expect fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean
