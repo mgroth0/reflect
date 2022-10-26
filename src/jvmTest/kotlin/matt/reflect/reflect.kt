@@ -3,6 +3,7 @@ package matt.reflect
 import matt.test.yesIUseTestLibs
 import org.junit.jupiter.api.Test
 import kotlin.contracts.ExperimentalContracts
+import kotlin.test.assertEquals
 
 
 class SomeTests {
@@ -11,8 +12,8 @@ class SomeTests {
   @ExperimentalContracts
   fun testClassForName() = reportAndReThrowErrors {
 	yesIUseTestLibs()
-	require(classForNameImpl("kotlin.String") == String::class)
-	require(classForNameImpl("kotlin.Int") == Int::class)
+	assertEquals(classForNameImpl("kotlin.String"), String::class)
+	assertEquals(classForNameImpl("kotlin.Int"), Int::class)
   }
 }
 
