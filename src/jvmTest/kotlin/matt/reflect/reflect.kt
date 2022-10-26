@@ -12,8 +12,8 @@ class SomeTests {
   @ExperimentalContracts
   fun testClassForName() = reportAndReThrowErrors {
 	yesIUseTestLibs()
-	assertEquals(String::class, classForNameImpl("kotlin.String"))
-	assertEquals(Int::class, classForNameImpl("kotlin.Int"))
+	assertEquals(String::class, classForName("kotlin.String"))
+	assertEquals(Int::class, classForName("kotlin.Int"))
   }
 }
 
