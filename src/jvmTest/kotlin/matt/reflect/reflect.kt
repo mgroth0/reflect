@@ -11,8 +11,8 @@ class SomeTests {
   @ExperimentalContracts
   fun testClassForName() = reportAndReThrowErrors {
 	yesIUseTestLibs()
-	require(classForName("kotlin.String") == String::class)
-	require(classForName("kotlin.Int") == Int::class)
+	require(classForNameImpl("kotlin.String") == String::class)
+	require(classForNameImpl("kotlin.Int") == Int::class)
   }
 }
 
@@ -24,8 +24,6 @@ fun reportAndReThrowErrors(op: ()->Unit) {
 	do {
 	  e!!
 	  println(e)
-	  println(e.message)
-	  println(e::class)
 	  e.printStackTrace()
 	  e = e.cause
 	} while (e != null)
