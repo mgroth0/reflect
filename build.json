@@ -1,5 +1,7 @@
 {
-  "type" :         "matt.mstruct.bj.MultiPlatformModule", "jvm": {}, "js": "LIB",
+  "type" :         "matt.mstruct.bj.MultiPlatformModule",
+  "jvm" :          {},
+  "js" :           "LIB",
   "dependencies" : [
 	{
 	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
@@ -15,6 +17,11 @@
 	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
 	  "cfg" :  "jvmMainImplementation",
 	  "key" :  "reflections8"
+	},
+	{
+	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
+	  "cfg" :  "jvmTestImplementation",
+	  "path" : ":k:test"
 	}
   ],
   "note" :         null
