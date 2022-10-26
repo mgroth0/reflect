@@ -14,6 +14,7 @@ class SomeTests {
 	yesIUseTestLibs()
 	assertEquals(String::class, classForName("kotlin.String"))
 	assertEquals(Int::class, classForName("kotlin.Int"))
+	assertEquals(Runtime::class, classForName("java.lang.Runtime"))
   }
 
 
