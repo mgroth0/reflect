@@ -29,7 +29,7 @@ fun reportAndReThrowErrors(op: ()->Unit) {
 	  e.printStackTrace()
 	  e = e.cause
 	} while (e != null)
-
+	throw throwable
   }
 
 }
