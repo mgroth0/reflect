@@ -14,6 +14,7 @@ actual class SomeTests {
   actual fun testClassForName() = reportAndReThrowErrors {
 	yesIUseTestLibs()
 	assertEquals(String::class, classForName("kotlin.String"))
+	assertEquals(String::class, classForName("kotlin.String?")) /*for kotlinx.serialization*/
 	assertEquals(Int::class, classForName("kotlin.Int"))
 	assertEquals(Runtime::class, classForName("java.lang.Runtime"))
   }
