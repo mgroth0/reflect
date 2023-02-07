@@ -57,13 +57,7 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 }
 
 
-actual fun classForNameImpl(qualifiedName: String): KClass<*>? {
-  return try {
-	Class.forName(qualifiedName).kotlin
-  } catch (e: ClassNotFoundException) {
-	null
-  }
-}
+
 
 actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)
 
