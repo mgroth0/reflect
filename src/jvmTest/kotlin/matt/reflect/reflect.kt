@@ -1,5 +1,6 @@
 package matt.reflect
 
+import matt.lang.nametoclass.classForName
 import matt.test.reportAndReThrowErrors
 import matt.test.yesIUseTestLibs
 import org.junit.jupiter.api.Test
