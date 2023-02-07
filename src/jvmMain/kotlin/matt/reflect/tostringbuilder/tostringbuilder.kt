@@ -1,10 +1,8 @@
 package matt.reflect.tostringbuilder
 
-import kotlin.reflect.KClass
+import matt.reflect.tostring.toStringBuilder
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.jvm.isAccessible
-import matt.lang.tostring.toStringBuilder
 
 fun Any.toStringBuilder(
   vararg props: KProperty<*>
@@ -15,20 +13,6 @@ fun Any.toStringBuilder(
 	}.getter.call()
   })
 }
-
-fun Any.toStringBuilder(
-  map: Map<String, Any?> = mapOf()
-): String {
-  val realMap = map.toMutableMap()
-  if (realMap.isEmpty()) {
-	realMap["@"] = hashCode()
-  }
-  return this::class.firstSimpleName() + map.entries.joinToString(prefix = "[", postfix = "]") {
-	"${it.key}=${it.value}"
-  }
-}
-
-
 
 //fun Any.matt.model.tostringbuilder.toStringBuilder(vararg values: Pair<String, Any?>): String {
 //  val suffix = if (values.isEmpty()) "@" + this.hashCode() else values.joinToString(" ") {
