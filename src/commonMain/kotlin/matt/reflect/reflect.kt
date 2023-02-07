@@ -18,3 +18,5 @@ fun classForName(qualifiedName: String): KClass<*>? = when (qualifiedName) {
 internal expect fun classForNameImpl(qualifiedName: String): KClass<*>?
 
 expect fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean
+
+expect fun KClass<*>.firstSimpleName(): String

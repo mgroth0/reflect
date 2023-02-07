@@ -7,6 +7,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
@@ -77,3 +78,5 @@ fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = seq
 fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectInstance }.toList()
 
 
+
+actual fun KClass<*>.firstSimpleName() = this.simpleName ?: this.allSuperclasses.first().simpleName!!
