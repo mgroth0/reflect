@@ -1,7 +1,6 @@
 package matt.reflect.tostring
 
 import matt.reflect.firstSimpleName
-import kotlin.reflect.KProperty
 
 
 

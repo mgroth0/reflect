@@ -1,6 +1,5 @@
-package matt.reflect.tostringbuilder
+package matt.reflect.tostring
 
-import matt.reflect.tostring.toStringBuilder
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 
