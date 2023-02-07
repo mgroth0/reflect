@@ -4,22 +4,22 @@
   "js" :           "LIB",
   "dependencies" : [
 	{
-	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
+	  "type" : "Lib",
 	  "cfg" :  "jvmMainApi",
 	  "key" :  "kt-reflect"
 	},
 	{
-	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
+	  "type" : "Project",
 	  "cfg" :  "commonMainApi",
 	  "path" : ":k:lang"
 	},
 	{
-	  "type" : "matt.mstruct.bj.BuildJsonLibDependency",
+	  "type" : "Lib",
 	  "cfg" :  "jvmMainImplementation",
 	  "key" :  "reflections8"
 	},
 	{
-	  "type" : "matt.mstruct.bj.BuildJsonProjectDependency",
+	  "type" : "Project",
 	  "cfg" :  "commonTestImplementation",
 	  "path" : ":k:test"
 	}
