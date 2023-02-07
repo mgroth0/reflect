@@ -1,3 +1,5 @@
+@file:JvmName("ToStringJvmKt")
+
 package matt.reflect.tostring
 
 import kotlin.reflect.KProperty
