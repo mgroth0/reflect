@@ -1,6 +1,6 @@
 package matt.reflect
 
-expect class SomeTests {
+expect class ReflectTests {
 
   fun testClassForName()
 

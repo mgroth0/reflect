@@ -8,7 +8,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
 
 
-actual class SomeTests {
+actual class ReflectTests {
 
   @Test
   @ExperimentalContracts
