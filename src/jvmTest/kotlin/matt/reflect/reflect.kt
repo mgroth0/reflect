@@ -4,14 +4,12 @@ import matt.lang.nametoclass.classForName
 import matt.test.reportAndReThrowErrors
 import matt.test.yesIUseTestLibs
 import org.junit.jupiter.api.Test
-import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
 
 
 actual class ReflectTests {
 
     @Test
-    @ExperimentalContracts
     actual fun testClassForName() = reportAndReThrowErrors {
         yesIUseTestLibs()
         assertEquals(String::class, classForName("kotlin.String"))
