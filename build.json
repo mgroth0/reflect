@@ -1,28 +1,27 @@
 {
-  "type" :         "MultiPlatformModule",
-  "jvm" :          {},
-  "js" :           "LIB",
-  "dependencies" : [
-	{
-	  "type" : "Lib",
-	  "cfg" :  "jvmMainApi",
-	  "key" :  "kt-reflect"
-	},
-	{
-	  "type" : "Project",
-	  "cfg" :  "commonMainApi",
-	  "path" : ":k:lang"
-	},
-	{
-	  "type" : "Lib",
-	  "cfg" :  "jvmMainImplementation",
-	  "key" :  "reflections8"
-	},
-	{
-	  "type" : "Project",
-	  "cfg" :  "commonTestImplementation",
-	  "path" : ":k:test"
-	}
-  ],
-  "note" :         null
+  "type": "MultiPlatformModule",
+  "jvm": {},
+  "js": "LIB",
+  "dependencies": [
+    {
+      "type": "Lib",
+      "cfg": "jvmMainApi",
+      "key": "kt-reflect"
+    },
+    {
+      "type": "Project",
+      "cfg": "commonMainApi",
+      "path": ":k:lang"
+    },
+    {
+      "type": "Lib",
+      "cfg": "jvmMainImplementation",
+      "key": "reflections8"
+    },
+    {
+      "type": "Project",
+      "cfg": "commonTestImplementation",
+      "path": ":k:test"
+    }
+  ]
 }

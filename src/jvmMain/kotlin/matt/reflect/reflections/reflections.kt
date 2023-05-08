@@ -1,12 +1,10 @@
 package matt.reflect.reflections
 
 import matt.lang.RUNTIME
-import matt.lang.anno.oexp.PyClass
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
-import java.net.URL
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -96,19 +94,3 @@ private val subclassCache = mutableMapOf<SubClassSearchParams, List<KClass<*>>>(
 private const val MATT_PACK = "matt"
 
 
-fun playWithReflections(jarURL: URL): String {
-    val cfg = ConfigurationBuilder()
-        /*.addUrls()
-        .addClassLoader()
-        .addClassLoaders()
-        .forPackages()*/
-        .setUrls(jarURL)
-
-    Reflections(cfg)
-        .getTypesAnnotatedWith(PyClass::class.java)
-
-
-    return "todo"
-
-
-}
