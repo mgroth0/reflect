@@ -1,6 +1,6 @@
 package matt.reflect.reflections
 
-import matt.lang.RUNTIME
+import matt.lang.NUM_LOGICAL_CORES
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
@@ -58,7 +58,7 @@ private class Reflection(
         /*val t = System.nanoTime()
         debug("getting Reflections...")*/
 
-        var config = ConfigurationBuilder().useParallelExecutor(RUNTIME.availableProcessors())
+        var config = ConfigurationBuilder().useParallelExecutor(NUM_LOGICAL_CORES)
         if (cfg.scanMethodAnnotations) {
             config = config.addScanners(MethodAnnotationsScanner())
         }
