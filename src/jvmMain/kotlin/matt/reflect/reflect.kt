@@ -74,4 +74,3 @@ fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectI
 
 
 actual fun KClass<*>.firstSimpleName() = this.simpleName ?: this.allSuperclasses.first().simpleName!!
-actual fun KClass<*>.firstSimpleName2() = this.simpleName ?: this.allSuperclasses.first().simpleName!!
