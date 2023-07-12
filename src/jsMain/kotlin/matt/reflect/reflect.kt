@@ -8,3 +8,4 @@ import kotlin.reflect.KClass
 actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = NOT_IMPLEMENTED
 
 actual fun KClass<*>.firstSimpleName() = this.simpleName!!
+actual fun KClass<*>.firstSimpleName2() = this.simpleName!!

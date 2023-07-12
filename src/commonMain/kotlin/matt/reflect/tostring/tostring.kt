@@ -1,6 +1,6 @@
 package matt.reflect.tostring
 
-import matt.reflect.firstSimpleName
+import matt.reflect.firstSimpleName2
 
 
 fun Any.toStringBuilder(
@@ -10,7 +10,7 @@ fun Any.toStringBuilder(
     if (realMap.isEmpty()) {
         realMap["@"] = hashCode()
     }
-    return this::class.firstSimpleName() + map.entries.joinToString(prefix = "[", postfix = "]") {
+    return this::class.firstSimpleName2() + map.entries.joinToString(prefix = "[", postfix = "]") {
         "${it.key}=${it.value}"
     }
 }
