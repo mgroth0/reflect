@@ -5,6 +5,9 @@ import matt.test.onlyIfBasic
 import matt.test.reportAndReThrowErrors
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.assertThrows
+import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.Test
@@ -26,6 +29,15 @@ actual class ReflectTests {
 }
 
 class JvmReflectTests {
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun initialize(): Unit {
+            onlyIfBasic()
+        }
+    }
+
     @Test
     fun noArgsConstructorChecks() {
         assertTrue(ClassWithNoArgsConstructor::class.hasNoArgsConstructor)
@@ -43,15 +55,20 @@ class JvmReflectTests {
 
     @Test
     fun access() {
+
         val obj = ClassWithAPrivateMethod()
         val secretNumberFunction =
             ClassWithAPrivateMethod::class.declaredMemberFunctions.first { it.name == "secretNumber" }
         val secretVariable =
             ClassWithAPrivateMethod::class.declaredMemberProperties.first { it.name == "secretVariable" }
-        secretNumberFunction.call()
-        secretVariable.get(obj)
+        assertThrows<IllegalCallableAccessException> {
+            secretNumberFunction.call(obj)
+        }
+        assertThrows<IllegalCallableAccessException> {
+            secretVariable.get(obj)
+        }
         secretNumberFunction.access {
-            assertEquals(call(), 5)
+            assertEquals(call(obj), 5)
         }
         secretVariable.access {
             assertEquals(getter.call(obj), "xyz")
@@ -62,7 +79,7 @@ class JvmReflectTests {
 
 class ClassWithAPrivateMethod() {
     private fun secretNumber() = 5
-    val secretVariable = "xyz"
+    private val secretVariable = "xyz"
 }
 
 

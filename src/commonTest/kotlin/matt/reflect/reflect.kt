@@ -1,5 +1,6 @@
 package matt.reflect
 
+import matt.test.onlyIfBasic
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,9 +16,9 @@ class CommonReflectTests {
 
     @Test
     fun simpleClassName() {
+        onlyIfBasic()
         assertEquals(Int::class.firstSimpleName(), "Int")
     }
-
 
 
 }
