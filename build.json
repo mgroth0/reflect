@@ -1,7 +1,9 @@
 {
   "type": "MultiPlatformModule",
   "jvm": {},
-  "js": {"type":"lib"},
+  "js": {
+    "type": "lib"
+  },
   "dependencies": [
     {
       "type": "Lib",
@@ -23,5 +25,6 @@
       "cfg": "commonTestImplementation",
       "path": ":k:test"
     }
-  ]
+  ],
+  "minPercentKovered": 3
 }

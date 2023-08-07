@@ -1,11 +1,10 @@
 package matt.reflect
 
 import matt.lang.nametoclass.classForName
-import matt.test.onlyIfBasic
-import matt.test.reportAndReThrowErrors
+import matt.test.JupiterTestAssertions.assertRunsInOneMinute
+import matt.test.base.reportAndReThrowErrors
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.assertThrows
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.full.declaredMemberFunctions
@@ -18,7 +17,6 @@ actual class ReflectTests {
 
 
     actual fun testClassForName() = reportAndReThrowErrors {
-        onlyIfBasic()
         assertEquals(String::class, classForName("kotlin.String"))
         assertEquals(String::class, classForName("kotlin.String?")) /*for kotlinx.serialization*/
         assertEquals(Int::class, classForName("kotlin.Int"))
@@ -30,22 +28,15 @@ actual class ReflectTests {
 
 class JvmReflectTests {
 
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun initialize(): Unit {
-            onlyIfBasic()
-        }
-    }
 
     @Test
-    fun noArgsConstructorChecks() {
+    fun noArgsConstructorChecks() = assertRunsInOneMinute {
         assertTrue(ClassWithNoArgsConstructor::class.hasNoArgsConstructor)
         assertFalse(ClassWithoutNoArgsConstructor::class.hasNoArgsConstructor)
     }
 
     @Test
-    fun recurseSealedClasses() {
+    fun recurseSealedClasses() = assertRunsInOneMinute {
         assertEquals(
             ASealedInterface::class.recurseSealedClasses().toList().size,
             4
@@ -54,7 +45,7 @@ class JvmReflectTests {
 
 
     @Test
-    fun access() {
+    fun access() = assertRunsInOneMinute {
 
         val obj = ClassWithAPrivateMethod()
         val secretNumberFunction =

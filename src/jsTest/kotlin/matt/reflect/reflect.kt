@@ -1,6 +1,7 @@
 package matt.reflect
 
-import matt.test.reportAndReThrowErrors
+import matt.test.base.reportAndReThrowErrors
+
 
 actual class ReflectTests {
     actual fun testClassForName() = reportAndReThrowErrors {
