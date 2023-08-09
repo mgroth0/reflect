@@ -2,6 +2,7 @@
 
 package matt.reflect
 
+import matt.lang.function.Consume
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
@@ -74,3 +75,10 @@ fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectI
 
 
 actual fun KClass<*>.firstSimpleName() = this.simpleName ?: this.allSuperclasses.first().simpleName!!
+fun <T : Any> KClass<T>.onEachSealedSubClassRecursive(op: Consume<KClass<out T>>): Unit = sealedSubclasses.forEach {
+    if (it.isSealed) {
+        it.onEachSealedSubClassRecursive(op)
+    } else {
+        op(it)
+    }
+}
