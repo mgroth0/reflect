@@ -1,10 +1,12 @@
 package matt.reflect.reflections
 
 import matt.lang.NUM_LOGICAL_CORES
+import matt.lang.go
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
 
@@ -21,15 +23,22 @@ fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> = defaultMattCon
     .getTypesAnnotationWith(this)
 
 @Synchronized
-fun <T : Any> KClass<T>.mattSubClasses() = subclasses(MATT_PACK)
+fun <T : Any> KClass<T>.mattSubClasses(classLoader: ClassLoader? = null) =
+    subclasses(MATT_PACK, classLoader = classLoader)
 
 @Synchronized
-fun <T : Any> KClass<T>.subclasses(pack: String): List<KClass<out T>> {
+fun <T : Any> KClass<T>.subclasses(
+    pack: String,
+    classLoader: ClassLoader? = null
+): List<KClass<out T>> {
     val searchParams = SubClassSearchParams(this, pack)
-    @Suppress("UNCHECKED_CAST") return (subclassCache[searchParams] ?: run {
-        val cfg = ReflectionConfig(pack)
+    val fromCache = if (classLoader == null) subclassCache[searchParams] else null
+    @Suppress("UNCHECKED_CAST") return (fromCache ?: run {
+        val cfg = ReflectionConfig(pack, classLoader = classLoader)
         val subClasses = cfg.reflection().getSubTypesOf(this)
-        subclassCache[searchParams] = subClasses
+        if (classLoader == null) {
+            subclassCache[searchParams] = subClasses
+        }
         subClasses
     }) as List<KClass<out T>>
 }
@@ -40,11 +49,15 @@ private val methodScanningMattConfig = ReflectionConfig(scanMethodAnnotations = 
 
 private data class ReflectionConfig(
     val pack: String = MATT_PACK,
-    val scanMethodAnnotations: Boolean = false
+    val scanMethodAnnotations: Boolean = false,
+    val classLoader: ClassLoader? = null
 ) {
-    fun reflection() = synchronized(reflectionsCache) {
-        reflectionsCache[this] ?: Reflection(this).also {
-            reflectionsCache[this] = it
+    fun reflection(): Reflection {
+        if (classLoader != null) return Reflection(this)
+        return synchronized(reflectionsCache) {
+            reflectionsCache[this] ?: Reflection(this).also {
+                reflectionsCache[this] = it
+            }
         }
     }
 }
@@ -65,6 +78,14 @@ private class Reflection(
 
 
         config = config.forPackages(cfg.pack)
+
+        cfg.classLoader?.go {
+            config.classLoaders = Optional.of(arrayOf(it))
+            error("can't get classloaders in reflections to work. Try ClassGraph?")
+        }
+
+//        println("config.classLoaders=${config.classLoaders.toList().joinToString { "${it}" }}")
+
 
         val r = Reflections(config)
 
@@ -87,7 +108,10 @@ private class Reflection(
 
 }
 
-data class SubClassSearchParams(val cls: KClass<*>, val pack: String = MATT_PACK)
+data class SubClassSearchParams(
+    val cls: KClass<*>,
+    val pack: String = MATT_PACK
+)
 
 private val subclassCache = mutableMapOf<SubClassSearchParams, List<KClass<*>>>()
 
