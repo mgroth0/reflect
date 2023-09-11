@@ -16,14 +16,34 @@
       "path": ":k:lang"
     },
     {
+      "type": "Project",
+      "cfg": "commonMainApi",
+      "path": ":k:prim"
+    },
+    {
       "type": "Lib",
       "cfg": "jvmMainImplementation",
       "key": "reflections8"
     },
     {
       "type": "Project",
+      "cfg": "jvmMainImplementation",
+      "path": ":k:classload"
+    },
+    {
+      "type": "Lib",
+      "cfg": "jvmMainImplementation",
+      "key": "kotlinx-serialization-core"
+    },
+    {
+      "type": "Project",
       "cfg": "commonTestImplementation",
       "path": ":k:test"
+    },
+    {
+      "type": "Lib",
+      "cfg": "jvmMainImplementation",
+      "key": "classGraph"
     }
   ],
   "minPercentKovered": 3

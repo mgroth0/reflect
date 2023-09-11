@@ -1,8 +1,6 @@
 package matt.reflect
 
-import matt.lang.nametoclass.classForName
 import matt.test.JupiterTestAssertions.assertRunsInOneMinute
-import matt.test.base.reportAndReThrowErrors
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.assertThrows
@@ -12,19 +10,6 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-
-actual class ReflectTests {
-
-
-    actual fun testClassForName() = reportAndReThrowErrors {
-        assertEquals(String::class, classForName("kotlin.String"))
-        assertEquals(String::class, classForName("kotlin.String?")) /*for kotlinx.serialization*/
-        assertEquals(Int::class, classForName("kotlin.Int"))
-        assertEquals(Runtime::class, classForName("java.lang.Runtime"))
-    }
-
-
-}
 
 class JvmReflectTests {
 
