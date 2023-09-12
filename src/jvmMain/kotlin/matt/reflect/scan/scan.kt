@@ -4,6 +4,7 @@ import matt.classload.Jar
 import matt.classload.JvmClassGetter
 import matt.classload.useJarClassGetter
 import matt.lang.anno.SeeURL
+import matt.lang.anno.optin.ExperimentalMattCode
 import matt.lang.classname.JvmQualifiedClassName
 import matt.lang.classpathwork.ClassPathWorker
 import matt.lang.model.file.FilePath
@@ -23,6 +24,14 @@ private const val DEFAULT_INCLUDE_PARENT_CLASSLOADERS = true
 
 fun systemScanner() =
     ClassScanner(ClassLoader.getSystemClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+@ExperimentalMattCode
+fun platformScanner() = ClassScanner(ClassLoader.getPlatformClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+@ExperimentalMattCode
+fun debugScanner() = ClassScanner(
+    ClassLoader.getSystemClassLoader(),
+    ClassLoader.getPlatformClassLoader(),
+    includeParentClassloaders = true
+)
 
 
 fun JvmClassGetter.scanner() = ClassScanner(*classLoaders)

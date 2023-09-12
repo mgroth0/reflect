@@ -26,7 +26,17 @@ class MattScannerTool(
 
 
     override fun findClass(qName: JvmQualifiedClassName): KClass<*>? {
-        TODO("Not yet implemented")
+        return findJClass(qName)?.kotlin
+    }
+
+    fun findJClass(qName: JvmQualifiedClassName): Class<*>? {
+        classLoaders.forEach {
+            val c = it.loadClass(qName.name)
+            if (c != null) {
+                return c
+            }
+        }
+        return null
     }
 
 }
