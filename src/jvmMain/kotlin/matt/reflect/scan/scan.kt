@@ -3,7 +3,6 @@ package matt.reflect.scan
 import matt.classload.Jar
 import matt.classload.JvmClassGetter
 import matt.classload.useJarClassGetter
-import matt.lang.anno.SeeURL
 import matt.lang.anno.optin.ExperimentalMattCode
 import matt.lang.classname.JvmQualifiedClassName
 import matt.lang.classpathwork.ClassPathWorker
@@ -14,8 +13,6 @@ import matt.reflect.scan.classgraph.ClassGraphScannerTool
 import matt.reflect.scan.matttool.MattScannerTool
 import matt.reflect.scan.reflections.ReflectionsScannerTool
 import java.lang.reflect.Method
-import java.util.*
-import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
@@ -24,8 +21,11 @@ private const val DEFAULT_INCLUDE_PARENT_CLASSLOADERS = true
 
 fun systemScanner() =
     ClassScanner(ClassLoader.getSystemClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+
 @ExperimentalMattCode
-fun platformScanner() = ClassScanner(ClassLoader.getPlatformClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+fun platformScanner() =
+    ClassScanner(ClassLoader.getPlatformClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+
 @ExperimentalMattCode
 fun debugScanner() = ClassScanner(
     ClassLoader.getSystemClassLoader(),
@@ -36,16 +36,22 @@ fun debugScanner() = ClassScanner(
 
 fun JvmClassGetter.scanner() = ClassScanner(*classLoaders)
 
-@SeeURL("https://www.baeldung.com/jar-file-get-class-names")
+
+fun JarFile.readEachEntry() = sequence {
+    val e = entries()
+    while (e.hasMoreElements()) {
+        yield(e.nextElement())
+    }
+}
+
 class JarScanner(private val jar: FilePath) {
-    fun classNames(
+    private fun classNames(
         within: Pack
     ): Set<JvmQualifiedClassName> {
-        val classNames: MutableSet<JvmQualifiedClassName> = HashSet()
         JarFile(jar.filePath).use { jarFile ->
-            val e: Enumeration<JarEntry> = jarFile.entries()
-            while (e.hasMoreElements()) {
-                val jarEntry: JarEntry = e.nextElement()
+
+
+            return jarFile.entries().asSequence().mapNotNullTo(mutableSetOf()) { jarEntry ->
                 if (
                     jarEntry.name.endsWith(".class")
                     && !jarEntry.name.endsWith("module-info.class")
@@ -53,11 +59,10 @@ class JarScanner(private val jar: FilePath) {
                 ) {
                     val className: String = jarEntry.name
                         .replace("/", ".")
-                        .replace(".class", "")
-                    classNames.add(JvmQualifiedClassName(className))
-                }
+                        .removeSuffix(".class")
+                    JvmQualifiedClassName(className)
+                } else null
             }
-            return classNames
         }
     }
 
@@ -65,15 +70,20 @@ class JarScanner(private val jar: FilePath) {
         scanner().run(op)
     }
 
-    fun loadAllClasses(within: Pack = MATT_PACK): Set<Class<*>> {
+
+    fun loadAllClasses(
+        within: Pack = MATT_PACK,
+        initializeClasses: Boolean = true
+    ): Set<Class<*>> {
         val classNames = classNames(within)
         return useJarClassGetter(Jar(jar)) {
             classNames.mapTo(mutableSetOf()) {
-                it.getJ()!!
+                it.getJ(initializeClasses) ?: error("could not get class: $it")
             }
         }
     }
 }
+
 
 class ClassScanner internal constructor(
     vararg classLoaders: ClassLoader,
