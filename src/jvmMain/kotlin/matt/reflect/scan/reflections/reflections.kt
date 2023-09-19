@@ -44,6 +44,10 @@ class ReflectionsScannerTool(
         TODO("Not yet implemented")
     }
 
+    override fun referencedClasses(): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
+    }
+
 
     @Synchronized
     override fun <T : Any> KClass<T>.subClasses(
@@ -56,6 +60,16 @@ class ReflectionsScannerTool(
         })
     }
 
+    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
+    }
+
+    override fun allClasses(
+        within: Pack,
+        initializeClasses: Boolean
+    ): Set<Class<*>> {
+        TODO("Not yet implemented")
+    }
 
 
 }

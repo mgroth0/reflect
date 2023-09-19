@@ -24,5 +24,4 @@ value class Pack(val name: String) {
     fun asUnixFilePath() = name.replace(".", "/")
 }
 
-
-internal val MATT_PACK = Pack("matt")
+val MATT_PACK = Pack("matt")

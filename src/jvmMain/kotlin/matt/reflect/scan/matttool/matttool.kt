@@ -24,9 +24,24 @@ class MattScannerTool(
         TODO("Not yet implemented")
     }
 
+    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
+    }
+
+    override fun allClasses(
+        within: Pack,
+        initializeClasses: Boolean
+    ): Set<Class<*>> {
+        TODO("Not yet implemented")
+    }
+
 
     override fun findClass(qName: JvmQualifiedClassName): KClass<*>? {
         return findJClass(qName)?.kotlin
+    }
+
+    override fun referencedClasses(): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
     }
 
     fun findJClass(qName: JvmQualifiedClassName): Class<*>? {

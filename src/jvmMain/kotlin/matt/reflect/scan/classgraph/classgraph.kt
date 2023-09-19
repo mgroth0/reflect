@@ -11,6 +11,7 @@ import matt.lang.classname.jvmQualifiedClassName
 import matt.reflect.pack.MATT_PACK
 import matt.reflect.pack.Pack
 import matt.reflect.scan.ClassScannerTool
+import matt.reflect.scan.DEFAULT_INIT_CLASSES
 import matt.reflect.scan.classgraph.ClassGraphW.Annotations
 import matt.reflect.scan.classgraph.ClassGraphW.Methods
 import kotlin.reflect.KClass
@@ -47,11 +48,34 @@ class ClassGraphScannerTool(
         subtypesOf(this@subClasses).loadKotlin()
     }
 
+    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
+    }
+
+    override fun allClasses(
+        within: Pack,
+        initializeClasses: Boolean
+    ): Set<Class<*>> = classGraph {
+        packs += within
+        /*details += Annotations*/
+        if (initializeClasses) initClasses()
+    }.scan {
+        this.all().loadClasses()
+    }.toSet()
+
     override fun findClass(qName: JvmQualifiedClassName) = classGraph {
         packs += MATT_PACK
+        details += Annotations
     }.scan {
         find(qName)?.loadKotlin()
     }
+
+    override fun referencedClasses(): Set<JvmQualifiedClassName> {
+        TODO("Not yet implemented")
+    }
+
+    fun allMattClasses(initializeClasses: Boolean = DEFAULT_INIT_CLASSES) =
+        allClasses(MATT_PACK, initializeClasses = initializeClasses)
 
 
 }
@@ -72,7 +96,20 @@ private class ClassGraphW(
     private var classGraph: ClassGraph = ClassGraph().overrideClassLoaders(*classLoaders)
         .enableClassInfo()
         .enableMemoryMapping()
+
+
+
+        /*
+
+        I do not know why I enabled this by default. I searched usages, and I cannot find anywhere where it would currently make sense to have this enabled.
+
+        In particular, it needs to be disabled for `GradleTests.buildServicesAreNotTasks`. Otherwise, that scan will try to get classes from compileOnly gradle classes which are definitely not neccesary in that scan.
+
         .enableExternalClasses()
+        */
+
+
+
         .ignoreClassVisibility().let {
             if (includeParentClassloaders) it else it.ignoreParentClassLoaders()
         }
@@ -104,6 +141,9 @@ private class ClassGraphW(
         }
     }
 
+    fun initClasses() {
+        classGraph = classGraph.initializeLoadedClasses()
+    }
 
     fun <R> scan(
         op: ScanResultWrapper.() -> R
@@ -133,6 +173,8 @@ private class ScanResultWrapper(private val scanResult: ScanResult) {
     fun find(name: JvmQualifiedClassName): ClassInfo? {
         return scanResult.getClassInfo(name.name)
     }
+
+    fun all() = scanResult.allClasses
 
 }
 

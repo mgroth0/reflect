@@ -1,7 +1,12 @@
 package matt.reflect.reflectutil
 
 import matt.lang.anno.SeeURL
+import matt.lang.classname.JvmQualifiedClassName
+import matt.lang.classname.jvmQualifiedClassName
 import java.lang.reflect.Method
+import kotlin.reflect.jvm.internal.impl.load.kotlin.header.KotlinClassHeader
+import kotlin.reflect.jvm.internal.impl.load.kotlin.header.KotlinClassHeader.Kind.CLASS
+import kotlin.reflect.jvm.internal.impl.load.kotlin.header.KotlinClassHeader.Kind.FILE_FACADE
 
 private val theField: Method by lazy {
     Metadata::class.java.declaredMethods.first {
@@ -9,18 +14,23 @@ private val theField: Method by lazy {
     }
 }
 
+private val kotlinMetadataName = JvmQualifiedClassName("kotlin.Metadata")
+
 @SeeURL("https://stackoverflow.com/a/39806722/6596010")
-        /*modified by Matt*/
+val Class<*>.kotlinMetadataValue
+    get() = declaredAnnotations
+        .firstOrNull { it.annotationClass.jvmQualifiedClassName == kotlinMetadataName }
+        ?.let { theField.invoke(it) }?.let {
+            KotlinClassHeader.Kind.getById(it as Int)
+        }
+
+
 fun Class<*>.isRegularKotlinClass(): Boolean {
-    return this.declaredAnnotations.any {
-        it.annotationClass.qualifiedName == "kotlin.Metadata"
-                && theField.invoke(it) == 1
-    }
+    return kotlinMetadataValue == CLASS
 }
 
 fun Class<*>.isFileKotlinClass(): Boolean {
-    return this.declaredAnnotations.any {
-        it.annotationClass.qualifiedName == "kotlin.Metadata"
-                && theField.invoke(it) == 2
-    }
+    return kotlinMetadataValue == FILE_FACADE
 }
+
+

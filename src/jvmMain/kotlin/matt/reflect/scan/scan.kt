@@ -6,10 +6,11 @@ import matt.classload.useJarClassGetter
 import matt.lang.anno.optin.ExperimentalMattCode
 import matt.lang.classname.JvmQualifiedClassName
 import matt.lang.classpathwork.ClassPathWorker
-import matt.lang.model.file.FilePath
+import matt.lang.model.file.FsFile
 import matt.reflect.pack.MATT_PACK
 import matt.reflect.pack.Pack
 import matt.reflect.scan.classgraph.ClassGraphScannerTool
+import matt.reflect.scan.jartool.JarScannerTool
 import matt.reflect.scan.matttool.MattScannerTool
 import matt.reflect.scan.reflections.ReflectionsScannerTool
 import java.lang.reflect.Method
@@ -19,23 +20,24 @@ import kotlin.reflect.jvm.kotlinFunction
 
 private const val DEFAULT_INCLUDE_PARENT_CLASSLOADERS = true
 
-fun systemScanner() =
-    ClassScanner(ClassLoader.getSystemClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+fun systemScope() =
+    ClassScope(ClassLoader.getSystemClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
 
 @ExperimentalMattCode
-fun platformScanner() =
-    ClassScanner(ClassLoader.getPlatformClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+fun platformScope() =
+    ClassScope(ClassLoader.getPlatformClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
 
 @ExperimentalMattCode
-fun debugScanner() = ClassScanner(
+fun debugScope() = ClassScope(
     ClassLoader.getSystemClassLoader(),
     ClassLoader.getPlatformClassLoader(),
     includeParentClassloaders = true
 )
 
 
-fun JvmClassGetter.scanner() = ClassScanner(*classLoaders)
+fun JvmClassGetter.scanner() = ClassScope(*classLoaders)
 
+interface ClassScanningScope
 
 fun JarFile.readEachEntry() = sequence {
     val e = entries()
@@ -44,51 +46,23 @@ fun JarFile.readEachEntry() = sequence {
     }
 }
 
-class JarScanner(private val jar: FilePath) {
-    private fun classNames(
-        within: Pack
-    ): Set<JvmQualifiedClassName> {
-        JarFile(jar.filePath).use { jarFile ->
+class JarScope(val jar: FsFile) : ClassScanningScope {
 
-
-            return jarFile.entries().asSequence().mapNotNullTo(mutableSetOf()) { jarEntry ->
-                if (
-                    jarEntry.name.endsWith(".class")
-                    && !jarEntry.name.endsWith("module-info.class")
-                    && jarEntry.name.startsWith("${within.asUnixFilePath().also { require(!it.endsWith("/")) }}/")
-                ) {
-                    val className: String = jarEntry.name
-                        .replace("/", ".")
-                        .removeSuffix(".class")
-                    JvmQualifiedClassName(className)
-                } else null
-            }
-        }
+    fun <R> usingJarScanner(op: ClassScannerTool.() -> R) = JarFile(jar.path).use {
+        JarScannerTool(jar, it).run(op)
     }
 
-    fun <R> useClassScanner(op: ClassScanner.() -> R): R = useJarClassGetter(Jar(jar)) {
+    fun <R> useClassScanner(op: ClassScope.() -> R): R = useJarClassGetter(Jar(jar)) {
         scanner().run(op)
     }
 
-
-    fun loadAllClasses(
-        within: Pack = MATT_PACK,
-        initializeClasses: Boolean = true
-    ): Set<Class<*>> {
-        val classNames = classNames(within)
-        return useJarClassGetter(Jar(jar)) {
-            classNames.mapTo(mutableSetOf()) {
-                it.getJ(initializeClasses) ?: error("could not get class: $it")
-            }
-        }
-    }
 }
 
 
-class ClassScanner internal constructor(
+class ClassScope internal constructor(
     vararg classLoaders: ClassLoader,
     val includeParentClassloaders: Boolean = DEFAULT_INCLUDE_PARENT_CLASSLOADERS
-) : ClassPathWorker(*classLoaders) {
+) : ClassPathWorker(*classLoaders), ClassScanningScope {
     fun usingReflections() =
         ReflectionsScannerTool(*classLoaders, includeParentClassloaders = includeParentClassloaders)
 
@@ -101,9 +75,20 @@ interface ClassScannerTool {
     fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>>
     fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method>
     fun <T : Any> KClass<T>.subClasses(within: Pack): Set<KClass<out T>>
+    fun classNames(within: Pack?): Set<JvmQualifiedClassName>
+    fun allClasses(
+        within: Pack = MATT_PACK,
+        initializeClasses: Boolean = DEFAULT_INIT_CLASSES
+    ): Set<Class<*>>
+
     fun findClass(qName: JvmQualifiedClassName): KClass<*>?
 
+    fun referencedClasses(): Set<JvmQualifiedClassName>
+
 }
+
+/*idk why this is true by default but I'd like to reverse it on a day I have more energy*/
+const val DEFAULT_INIT_CLASSES = true
 
 context(ClassScannerTool)
 fun <T : Any> KClass<T>.mattSubClasses(): Set<KClass<out T>> = subClasses(MATT_PACK)
