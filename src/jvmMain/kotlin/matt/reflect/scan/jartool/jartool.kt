@@ -27,6 +27,10 @@ class JarScannerTool(
         TODO("Not yet implemented")
     }
 
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>> {
+        TODO("Not yet implemented")
+    }
+
     override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
         require(within != null) {
             TODO("can within be null here? not sure")

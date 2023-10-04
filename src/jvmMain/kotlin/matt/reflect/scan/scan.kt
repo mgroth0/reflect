@@ -20,8 +20,10 @@ import kotlin.reflect.jvm.kotlinFunction
 
 private const val DEFAULT_INCLUDE_PARENT_CLASSLOADERS = true
 
-fun systemScope() =
-    ClassScope(ClassLoader.getSystemClassLoader(), includeParentClassloaders = DEFAULT_INCLUDE_PARENT_CLASSLOADERS)
+fun systemScope(
+    includePlatformClassloader: Boolean = DEFAULT_INCLUDE_PARENT_CLASSLOADERS
+) =
+    ClassScope(ClassLoader.getSystemClassLoader(), includeParentClassloaders = includePlatformClassloader)
 
 @ExperimentalMattCode
 fun platformScope() =
@@ -75,6 +77,7 @@ interface ClassScannerTool {
     fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>>
     fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method>
     fun <T : Any> KClass<T>.subClasses(within: Pack): Set<KClass<out T>>
+    fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>>
     fun classNames(within: Pack?): Set<JvmQualifiedClassName>
     fun allClasses(
         within: Pack = MATT_PACK,
@@ -84,6 +87,7 @@ interface ClassScannerTool {
     fun findClass(qName: JvmQualifiedClassName): KClass<*>?
 
     fun referencedClasses(): Set<JvmQualifiedClassName>
+
 
 }
 
@@ -99,3 +103,5 @@ fun KClass<out Annotation>.annotatedMattKTypes(): List<KClass<out Any>> = annota
 context(ClassScannerTool)
 fun KClass<out Annotation>.annotatedMattKFunctions() = annotatedMattJFunctions().map { it.kotlinFunction }
 
+context(ClassScannerTool)
+fun <T : Any> KClass<T>.mostConcreteMattImplementations(): Set<KClass<out T>> = mostConcreteTypes(MATT_PACK)

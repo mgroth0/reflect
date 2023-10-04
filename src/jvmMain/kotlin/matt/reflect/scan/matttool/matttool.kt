@@ -24,6 +24,10 @@ class MattScannerTool(
         TODO("Not yet implemented")
     }
 
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>> {
+        TODO("Not yet implemented")
+    }
+
     override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
         TODO("Not yet implemented")
     }

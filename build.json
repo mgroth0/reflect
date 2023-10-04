@@ -26,9 +26,9 @@
       "path": ":k:classload"
     },
     {
-      "type": "Lib",
+      "type": "Project",
       "cfg": "jvmMainImplementation",
-      "key": "kotlinx-serialization-core"
+      "path": ":k:collect"
     },
     {
       "type": "Project",
@@ -40,6 +40,5 @@
       "cfg": "jvmMainImplementation",
       "key": "classGraph"
     }
-  ],
-  "minPercentKovered": 3
+  ]
 }
