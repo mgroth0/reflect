@@ -20,20 +20,20 @@ class MattScannerTool(
         TODO("Not yet implemented")
     }
 
-    override fun <T : Any> KClass<T>.subClasses(within: Pack): Set<KClass<out T>> {
+    override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>): Set<KClass<out T>> {
         TODO("Not yet implemented")
     }
 
-    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>> {
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
         TODO("Not yet implemented")
     }
 
-    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+    override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
         TODO("Not yet implemented")
     }
 
     override fun allClasses(
-        within: Pack,
+        within: Set<Pack>,
         initializeClasses: Boolean
     ): Set<Class<*>> {
         TODO("Not yet implemented")

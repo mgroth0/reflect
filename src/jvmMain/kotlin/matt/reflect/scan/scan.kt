@@ -76,11 +76,11 @@ class ClassScope internal constructor(
 interface ClassScannerTool {
     fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>>
     fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method>
-    fun <T : Any> KClass<T>.subClasses(within: Pack): Set<KClass<out T>>
-    fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>>
-    fun classNames(within: Pack?): Set<JvmQualifiedClassName>
+    fun <T : Any> KClass<T>.subClasses(within: Set<Pack>): Set<KClass<out T>>
+    fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>>
+    fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName>
     fun allClasses(
-        within: Pack = MATT_PACK,
+        within: Set<Pack> = setOf(MATT_PACK),
         initializeClasses: Boolean = DEFAULT_INIT_CLASSES
     ): Set<Class<*>>
 
@@ -95,7 +95,7 @@ interface ClassScannerTool {
 const val DEFAULT_INIT_CLASSES = true
 
 context(ClassScannerTool)
-fun <T : Any> KClass<T>.mattSubClasses(): Set<KClass<out T>> = subClasses(MATT_PACK)
+fun <T : Any> KClass<T>.mattSubClasses(): Set<KClass<out T>> = subClasses(setOf(MATT_PACK))
 
 context(ClassScannerTool)
 fun KClass<out Annotation>.annotatedMattKTypes(): List<KClass<out Any>> = annotatedMattJTypes().map { it.kotlin }
@@ -104,4 +104,4 @@ context(ClassScannerTool)
 fun KClass<out Annotation>.annotatedMattKFunctions() = annotatedMattJFunctions().map { it.kotlinFunction }
 
 context(ClassScannerTool)
-fun <T : Any> KClass<T>.mostConcreteMattImplementations(): Set<KClass<out T>> = mostConcreteTypes(MATT_PACK)
+fun <T : Any> KClass<T>.mostConcreteMattImplementations(): Set<KClass<out T>> = mostConcreteTypes(setOf(MATT_PACK))

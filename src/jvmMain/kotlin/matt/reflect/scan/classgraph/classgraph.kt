@@ -47,29 +47,36 @@ class ClassGraphScannerTool(
         classesWithAnnotation(this@annotatedMattJTypes).load()
     }
 
-    override fun <T : Any> KClass<T>.subClasses(within: Pack) = classGraph {
-        packs += within
+    override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>) = classGraph {
+        within.forEach {
+            packs += it
+        }
         details += Annotations
     }.closingScan {
         subtypesOf(this@subClasses).loadKotlin()
     }
 
-    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack) = classGraph {
-        packs += within
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>) = classGraph {
+        within.forEach {
+            packs += it
+        }
         details += Annotations
     }.closingScan {
         mostConcreteTypesOf(this@mostConcreteTypes).loadKotlin()
     }
 
-    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+    override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
         TODO("Not yet implemented")
     }
 
     override fun allClasses(
-        within: Pack,
+        within: Set<Pack>,
         initializeClasses: Boolean
     ): Set<Class<*>> = classGraph {
-        packs += within/*details += Annotations*/
+        within.forEach {
+            packs += it
+        }
+        /*details += Annotations*/
         if (initializeClasses) initClasses()
     }.closingScan {
         this.all().load()
@@ -87,7 +94,7 @@ class ClassGraphScannerTool(
     }
 
     fun allMattClasses(initializeClasses: Boolean = DEFAULT_INIT_CLASSES) =
-        allClasses(MATT_PACK, initializeClasses = initializeClasses)
+        allClasses(setOf(MATT_PACK), initializeClasses = initializeClasses)
 
     inline fun <reified T1 : Any, reified T2 : Any> requireNoneAreBoth(
         pack: Pack

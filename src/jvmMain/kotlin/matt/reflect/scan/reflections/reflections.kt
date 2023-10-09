@@ -1,5 +1,6 @@
 package matt.reflect.scan.reflections
 
+import matt.collect.itr.mapToArray
 import matt.lang.NUM_LOGICAL_CORES
 import matt.lang.classname.JvmQualifiedClassName
 import matt.reflect.pack.MATT_PACK
@@ -22,13 +23,13 @@ class ReflectionsScannerTool(
 
     override fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> {
         return ReflectionConfig(
-            pack = MATT_PACK,
+            pack = setOf(MATT_PACK),
             classLoaders = classLoaders.toList()
         ).reflection().getTypesAnnotationWith(this)
     }
 
     override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> = ReflectionConfig(
-        pack = MATT_PACK,
+        pack = setOf(MATT_PACK),
         classLoaders = classLoaders.toList(),
         scanMethodAnnotations = true
     ).reflection().getMethodsWithAnnotation(this)
@@ -51,7 +52,7 @@ class ReflectionsScannerTool(
 
     @Synchronized
     override fun <T : Any> KClass<T>.subClasses(
-        within: Pack,
+        within: Set<Pack>,
     ): Set<KClass<out T>> {
         return (run {
             val cfg = ReflectionConfig(within, classLoaders = classLoaders.toList())
@@ -60,16 +61,16 @@ class ReflectionsScannerTool(
         })
     }
 
-    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Pack): Set<KClass<out T>> {
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
         TODO("Not yet implemented")
     }
 
-    override fun classNames(within: Pack?): Set<JvmQualifiedClassName> {
+    override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
         TODO("Not yet implemented")
     }
 
     override fun allClasses(
-        within: Pack,
+        within: Set<Pack>,
         initializeClasses: Boolean
     ): Set<Class<*>> {
         TODO("Not yet implemented")
@@ -79,7 +80,7 @@ class ReflectionsScannerTool(
 }
 
 private data class ReflectionConfig(
-    val pack: Pack,
+    val pack: Set<Pack>,
     val scanMethodAnnotations: Boolean = false,
     val classLoaders: List<ClassLoader>
 )
@@ -93,7 +94,8 @@ private class Reflection(
         if (cfg.scanMethodAnnotations) {
             config = config.addScanners(MethodAnnotationsScanner())
         }
-        config = config.forPackages(cfg.pack.name)
+        check(cfg.pack.isNotEmpty())
+        config = config.forPackages(*cfg.pack.mapToArray { it.name })
         println("WARNING!: Reflections ignores  the includeParentClassloaders property becase it doesn't know how to go one way or the other. Use ClassGraph?")
         config.classLoaders = Optional.of(cfg.classLoaders.toTypedArray())
 //        cfg.classLoader?.go {
