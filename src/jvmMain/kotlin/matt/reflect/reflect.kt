@@ -63,7 +63,7 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)
 
 
-fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = sequence<KClass<out T>> {
+fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = sequence {
   yield(this@recurseSealedClasses)
   sealedSubclasses.forEach {
 	yieldAll(it.recurseSealedClasses())

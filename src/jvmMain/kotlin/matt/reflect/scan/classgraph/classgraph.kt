@@ -10,9 +10,9 @@ import io.github.classgraph.MethodInfoList
 import io.github.classgraph.ScanResult
 import matt.lang.anno.NotSynchronizedForPerformance
 import matt.lang.anno.SeeURL
+import matt.lang.assertions.require.requireNot
 import matt.lang.classname.JvmQualifiedClassName
 import matt.lang.classname.jvmQualifiedClassName
-import matt.lang.require.requireNot
 import matt.lang.shutdown.ShutdownContext
 import matt.lang.shutdown.closingAtShutdown
 import matt.reflect.pack.MATT_PACK
@@ -265,9 +265,18 @@ interface ScannedClasses<T : Any> : Collection<ClassInfo> {
 
     fun loadKotlin(): Set<KClass<out T>>
 
+    fun hasClassInfo(name: String): Boolean
+
+    fun <R: T> empty(): ScannedClasses<R>
+
 }
 
-fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(type: KClass<out R>): ScannedClasses<R> {
+fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(
+    type: KClass<out R>
+): ScannedClasses<R> {
+    if (!hasClassInfo(type.qualifiedName!!)) {
+        return empty()
+    }
     val r = subtypesOf(type).filtered {
         it.subclasses.isEmpty() && it.classesImplementing.isEmpty()
     }
@@ -392,7 +401,12 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
     private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
         ClassInfoListWrapper<T>(classInfoList, scan = this)
 
-    internal fun getClassInfo(name: String) = scanResult.getClassInfo(name)
+    override fun hasClassInfo(name: String) = scanResult.getClassInfo(name) != null
+    override fun <R : Any> empty(): ScannedClasses<R> {
+        return classInfoListWrapper(ClassInfoList())
+    }
+
+    internal fun getClassInfo(name: String) = scanResult.getClassInfo(name) ?: error("No class found with name $name")
 
     override fun <G : Any, P : Any> requireNoGenericClassWithFirstParameter(
         class1: Class<G>,
@@ -433,12 +447,23 @@ class ClassInfoListWrapper<T : Any> internal constructor(
     private val classInfoList: ClassInfoList,
     override val scan: ScanResultWrapper,
 ) : List<ClassInfo> by classInfoList, ScannedClassesBase<T>() {
+
+
+
     fun methods() = classInfoList.asSequence().map { it.methodInfo }.wrap()
 
     @Suppress("UNCHECKED_CAST")
     fun load(): Set<Class<out T>> = classInfoList.loadClasses().toSet() as Set<Class<out T>>
 
+
     override fun loadKotlin() = load().mapTo(mutableSetOf()) { it.kotlin }
+    override fun hasClassInfo(name: String): Boolean {
+        return classInfoList.any { it.name == name }
+    }
+
+    override fun <R : T> empty(): ScannedClasses<R> {
+        return classInfoListWrapper(ClassInfoList())
+    }
 
 
     override fun <R : T> subtypesOf(type: KClass<out R>) = subtypesOf(type.java)
@@ -524,6 +549,7 @@ class MethodInfoWrapper internal constructor(private val methodInfos: Sequence<M
 
     fun load(): Set<Method> = methodInfos.map { it.loadClassAndGetMethod() }.toSet()
     fun loadKotlin() = load().mapTo(mutableSetOf()) { it.kotlinFunction }
+
 }
 
 private fun ClassInfo.loadKotlin(): KClass<out Any> = loadClass().kotlin

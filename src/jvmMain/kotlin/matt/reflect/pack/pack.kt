@@ -1,6 +1,7 @@
 package matt.reflect.pack
 
 import kotlinx.serialization.Serializable
+import matt.lang.classname.JvmQualifiedClassName
 import matt.prim.str.hasWhitespace
 import matt.prim.str.joinWithPeriods
 
@@ -25,3 +26,5 @@ value class Pack(val name: String) {
 }
 
 val MATT_PACK = Pack("matt")
+
+val JvmQualifiedClassName.isMattClass get() = name.startsWith(MATT_PACK.name)
