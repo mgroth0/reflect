@@ -1,0 +1,29 @@
+{
+  "type": "MultiPlatformModule",
+  "jvm": {},
+  "android": {
+    "type": "Lib"
+  },
+  "dependencies": [
+    {
+      "type": "Project",
+      "cfg": "jvmMainApi",
+      "path": ":k:reflect"
+    },
+    {
+      "type": "Project",
+      "cfg": "jvmMainApi",
+      "path": ":k:collect"
+    },
+    {
+      "type": "Lib",
+      "cfg": "jvmMainImplementation",
+      "key": "reflections8"
+    },
+    {
+      "type": "Project",
+      "cfg": "jvmTestImplementation",
+      "path": ":k:test"
+    }
+  ]
+}

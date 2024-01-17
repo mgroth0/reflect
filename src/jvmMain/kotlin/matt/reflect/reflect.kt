@@ -8,13 +8,9 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.allSuperclasses
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 
 object YesIUseReflect
-
-annotation class TODO(val message: String = "matt.log.todo.todo")
 
 val KClass<*>.hasNoArgsConstructor
   get() = noArgConstructor != null
@@ -60,7 +56,7 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 
 
 
-actual fun KClass<*>.isSubTypeOf(cls: KClass<*>): Boolean = this.isSubclassOf(cls)
+
 
 
 fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = sequence {
@@ -74,7 +70,7 @@ fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectI
 
 
 
-actual fun KClass<*>.firstSimpleName() = this.simpleName ?: this.allSuperclasses.first().simpleName!!
+
 fun <T : Any> KClass<T>.onEachSealedSubClassRecursive(op: Consume<KClass<out T>>): Unit = sealedSubclasses.forEach {
     if (it.isSealed) {
         it.onEachSealedSubClassRecursive(op)

@@ -17,19 +17,19 @@ class JarScannerTool(
     private val jarFile: JarFile
 ) : ClassScannerTool {
     override fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>): Set<KClass<out T>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 
@@ -71,10 +71,10 @@ class JarScannerTool(
 
 
     override fun findClass(qName: JvmQualifiedClassName): KClass<*>? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 }

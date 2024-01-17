@@ -1,4 +1,5 @@
-package matt.reflect.scan.reflections
+package matt.reflect.reflections
+
 
 import matt.collect.itr.mapToArray
 import matt.lang.NUM_LOGICAL_CORES
@@ -6,6 +7,7 @@ import matt.lang.classname.JvmQualifiedClassName
 import matt.reflect.pack.MATT_PACK
 import matt.reflect.pack.Pack
 import matt.reflect.scan.ClassScannerTool
+import matt.reflect.scan.ClassScope
 import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
@@ -13,6 +15,9 @@ import java.lang.reflect.Method
 import java.util.*
 import kotlin.reflect.KClass
 
+
+fun ClassScope.usingReflections() =
+    ReflectionsScannerTool(*classLoaders, includeParentClassloaders = includeParentClassloaders)
 
 class ReflectionsScannerTool(
     private vararg val classLoaders: ClassLoader,
@@ -42,11 +47,11 @@ class ReflectionsScannerTool(
 
 
     override fun findClass(qName: JvmQualifiedClassName): KClass<*>? {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 
@@ -62,18 +67,18 @@ class ReflectionsScannerTool(
     }
 
     override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun allClasses(
         within: Set<Pack>,
         initializeClasses: Boolean
     ): Set<Class<*>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 

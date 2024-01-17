@@ -5,21 +5,19 @@
     "type": "lib"
   },
   "native": "LIB",
+  "android": {
+    "type": "Lib"
+  },
   "dependencies": [
     {
       "type": "Lib",
-      "cfg": "jvmMainApi",
+      "cfg": "commonJvmAndroidMainApi",
       "key": "kt-reflect"
     },
     {
       "type": "Project",
       "cfg": "commonMainApi",
       "path": ":k:prim"
-    },
-    {
-      "type": "Lib",
-      "cfg": "jvmMainImplementation",
-      "key": "reflections8"
     },
     {
       "type": "Project",

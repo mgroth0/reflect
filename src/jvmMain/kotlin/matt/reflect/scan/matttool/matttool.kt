@@ -17,26 +17,26 @@ class MattScannerTool(
     }
 
     override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>): Set<KClass<out T>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun allClasses(
         within: Set<Pack>,
         initializeClasses: Boolean
     ): Set<Class<*>> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
 
@@ -45,7 +45,7 @@ class MattScannerTool(
     }
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     fun findJClass(qName: JvmQualifiedClassName): Class<*>? {

@@ -12,7 +12,6 @@ import matt.reflect.pack.Pack
 import matt.reflect.scan.classgraph.ClassGraphScannerTool
 import matt.reflect.scan.jartool.JarScannerTool
 import matt.reflect.scan.matttool.MattScannerTool
-import matt.reflect.scan.reflections.ReflectionsScannerTool
 import java.lang.reflect.Method
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
@@ -65,8 +64,7 @@ class ClassScope internal constructor(
     vararg classLoaders: ClassLoader,
     val includeParentClassloaders: Boolean = DEFAULT_INCLUDE_PARENT_CLASSLOADERS
 ) : ClassPathWorker(*classLoaders), ClassScanningScope {
-    fun usingReflections() =
-        ReflectionsScannerTool(*classLoaders, includeParentClassloaders = includeParentClassloaders)
+
 
     fun usingClassGraph() = ClassGraphScannerTool(*classLoaders, includeParentClassloaders = includeParentClassloaders)
     fun usingMatt() = MattScannerTool(*classLoaders, includeParentClassloaders = includeParentClassloaders)

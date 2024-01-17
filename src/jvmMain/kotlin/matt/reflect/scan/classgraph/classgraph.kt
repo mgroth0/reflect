@@ -66,7 +66,7 @@ class ClassGraphScannerTool(
     }
 
     override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun allClasses(
@@ -90,7 +90,7 @@ class ClassGraphScannerTool(
     }
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     fun allMattClasses(initializeClasses: Boolean = DEFAULT_INIT_CLASSES) =
@@ -382,11 +382,11 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
         get() = all().size
 
     override fun contains(element: ClassInfo): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun containsAll(elements: Collection<ClassInfo>): Boolean {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun isEmpty(): Boolean {
