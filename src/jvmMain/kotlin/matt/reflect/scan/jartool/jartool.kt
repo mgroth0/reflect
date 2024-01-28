@@ -4,7 +4,7 @@ import matt.classload.Jar
 import matt.classload.useJarClassGetter
 import matt.collect.mapToSet
 import matt.lang.classname.JvmQualifiedClassName
-import matt.lang.model.file.FsFile
+import matt.lang.model.file.AnyFsFile
 import matt.reflect.pack.Pack
 import matt.reflect.scan.ClassScannerTool
 import java.lang.reflect.Method
@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 
 
 class JarScannerTool(
-    private val jarFilePath: FsFile,
+    private val jarFilePath: AnyFsFile,
     private val jarFile: JarFile
 ) : ClassScannerTool {
     override fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> {

@@ -38,6 +38,11 @@
       "type": "Lib",
       "cfg": "jvmMainImplementation",
       "key": "classGraph"
+    },
+    {
+      "type": "Lib",
+      "cfg": "androidInstrumentedTestImplementation",
+      "key": "androidx-test-runner"
     }
   ]
 }

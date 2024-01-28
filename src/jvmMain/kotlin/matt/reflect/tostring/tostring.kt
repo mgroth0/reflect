@@ -2,24 +2,30 @@
 
 package matt.reflect.tostring
 
+import matt.lang.jpy.ExcludeFromPython
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.isAccessible
 
-fun Any.toStringBuilder(
-  vararg props: KProperty<*>
-): String {
-  return toStringBuilder(props.associate {
-	it.name to it.apply {
-	  isAccessible = true
-	}.getter.call()
-  })
-}
-
-//fun Any.matt.model.tostringbuilder.toStringBuilder(vararg values: Pair<String, Any?>): String {
-//  val suffix = if (values.isEmpty()) "@" + this.hashCode() else values.joinToString(" ") {
-//	it.first + "=" + it.second
-//  }
-//  return "${this::class.simpleName} [$suffix]"
+//fun Any.toStringBuilder(
+//    vararg props: KProperty<*>
+//): String {
+//    return toStringBuilder(props.associate {
+//        it.name to it.apply {
+//            isAccessible = true
+//        }.getter.call()
+//    })
 //}
 
 
+abstract class PropReflectingStringableClass : ReflectingStringableClass() {
+    final override fun toStringProps(): Map<String, Any?> {
+        return reflectingToStringProps().associate {
+            it.name to it.apply {
+                isAccessible = true
+            }.getter.call()
+        }
+    }
+
+    @ExcludeFromPython
+    open fun reflectingToStringProps(): Set<KProperty<*>> = setOf()
+}

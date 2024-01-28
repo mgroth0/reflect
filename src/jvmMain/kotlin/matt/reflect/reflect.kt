@@ -10,7 +10,6 @@ import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.isAccessible
 
-object YesIUseReflect
 
 val KClass<*>.hasNoArgsConstructor
   get() = noArgConstructor != null

@@ -6,7 +6,7 @@ import matt.classload.useJarClassGetter
 import matt.lang.anno.optin.ExperimentalMattCode
 import matt.lang.classname.JvmQualifiedClassName
 import matt.lang.classpathwork.ClassPathWorker
-import matt.lang.model.file.FsFile
+import matt.lang.model.file.AnyFsFile
 import matt.reflect.pack.MATT_PACK
 import matt.reflect.pack.Pack
 import matt.reflect.scan.classgraph.ClassGraphScannerTool
@@ -47,7 +47,7 @@ fun JarFile.readEachEntry() = sequence {
     }
 }
 
-class JarScope(val jar: FsFile) : ClassScanningScope {
+class JarScope(val jar: AnyFsFile) : ClassScanningScope {
 
     fun <R> usingJarScanner(op: ClassScannerTool.() -> R) = JarFile(jar.path).use {
         JarScannerTool(jar, it).run(op)

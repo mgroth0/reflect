@@ -9,7 +9,7 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
 
-abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T> {
+abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
 
   private val weakRefs = mutableMapOf<String, WeakProp<*>>()
 
@@ -20,7 +20,7 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T> {
   }
 
   @Synchronized
-  override fun deref(): T? {
+  final override fun deref(): T? {
 
 
 	val success = weakRefs.values.all {
