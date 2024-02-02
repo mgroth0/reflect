@@ -128,7 +128,7 @@ class ClassGraphScannerTool(
         badParameter: Class<P>,
         pack: Pack,
 
-        ) {
+    ) {
         classGraph {
             packs += pack
         }.closingScan {
@@ -175,7 +175,7 @@ class ClassGraphW internal constructor(
             In particular, it needs to be disabled for `GradleTests.buildServicesAreNotTasks`. Otherwise, that scan will try to get classes from compileOnly gradle classes which are definitely not neccesary in that scan.
 
             .enableExternalClasses()
-            */
+             */
 
 
             .ignoreClassVisibility().let {
@@ -324,54 +324,40 @@ abstract class ScannedClassesBase<T : Any> : ScannedClasses<T> {
         }
     }
 
-    abstract protected val scan: ScanResultWrapper
-    final override fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> {
-        return ClassInfoListWrapper(
-            ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }), scan
-        )
-    }
+    protected abstract val scan: ScanResultWrapper
+    final override fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> = ClassInfoListWrapper(
+        ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }), scan
+    )
 }
 
 
 @NotSynchronizedForPerformance
 class ScanResultWrapper internal constructor(val scanResult: ScanResult) : ScannedClassesBase<Any>(), AutoCloseable {
-    fun classesWithMethodAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> {
-        return classInfoListWrapper(scanResult.getClassesWithMethodAnnotation(annotation.java))
-    }
+    fun classesWithMethodAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithMethodAnnotation(annotation.java))
 
-    fun classesWithAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> {
-        return classInfoListWrapper(scanResult.getClassesWithAnnotation(annotation.java))
-    }
+    fun classesWithAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithAnnotation(annotation.java))
 
 
     override fun <R : Any> subtypesOf(type: KClass<out R>) = subtypesOf<R>(type.java)
-    override fun <R : Any> subtypesOf(type: Class<out R>): ClassInfoListWrapper<R> {
-        return classInfoListWrapper(cachedSubtypesOf(type))
-    }
+    override fun <R : Any> subtypesOf(type: Class<out R>): ClassInfoListWrapper<R> = classInfoListWrapper(cachedSubtypesOf(type))
 
     @NotSynchronizedForPerformance
-    internal fun <R : Any> cachedSubtypesOf(type: Class<out R>): ClassInfoList {
-        return cachedSubTypes.getOrPut(type.name) {
-            if (type.isInterface) {
-                scanResult.getClassesImplementing(type)
-            } else {
-                scanResult.getSubclasses(type)
-            }
+    internal fun <R : Any> cachedSubtypesOf(type: Class<out R>): ClassInfoList = cachedSubTypes.getOrPut(type.name) {
+        if (type.isInterface) {
+            scanResult.getClassesImplementing(type)
+        } else {
+            scanResult.getSubclasses(type)
         }
     }
 
     @NotSynchronizedForPerformance
     private val cachedSubTypes = mutableMapOf<String, ClassInfoList>()
 
-    fun find(name: JvmQualifiedClassName): ClassInfo? {
-        return scanResult.getClassInfo(name.name)
-    }
+    fun find(name: JvmQualifiedClassName): ClassInfo? = scanResult.getClassInfo(name.name)
 
     fun all() = classInfoListWrapper<Any>(scanResult.allClasses)
 
-    override fun loadKotlin(): Set<KClass<out Any>> {
-        return all().loadKotlin()
-    }
+    override fun loadKotlin(): Set<KClass<out Any>> = all().loadKotlin()
 
     override fun filtered(predicate: ClassInfoFilter) =
         classInfoListWrapper<Any>(scanResult.allClasses.filter(predicate))
@@ -389,22 +375,16 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
         TODO()
     }
 
-    override fun isEmpty(): Boolean {
-        return size == 0
-    }
+    override fun isEmpty(): Boolean = size == 0
 
-    override fun iterator(): Iterator<ClassInfo> {
-        return all().iterator()
-    }
+    override fun iterator(): Iterator<ClassInfo> = all().iterator()
 
 
     private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
         ClassInfoListWrapper<T>(classInfoList, scan = this)
 
     override fun hasClassInfo(name: String) = scanResult.getClassInfo(name) != null
-    override fun <R : Any> empty(): ScannedClasses<R> {
-        return classInfoListWrapper(ClassInfoList())
-    }
+    override fun <R : Any> empty(): ScannedClasses<R> = classInfoListWrapper(ClassInfoList())
 
     internal fun getClassInfo(name: String) = scanResult.getClassInfo(name) ?: error("No class found with name $name")
 
@@ -412,9 +392,7 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
         class1: Class<G>,
         class2: Class<P>,
         excludeClassNames: Set<String>
-    ) {
-        return all().requireNoGenericClassWithFirstParameter(class1, class2, excludeClassNames)
-    }
+    ) = all().requireNoGenericClassWithFirstParameter(class1, class2, excludeClassNames)
 
     override fun close() {
         scanResult.close()
@@ -457,13 +435,9 @@ class ClassInfoListWrapper<T : Any> internal constructor(
 
 
     override fun loadKotlin() = load().mapTo(mutableSetOf()) { it.kotlin }
-    override fun hasClassInfo(name: String): Boolean {
-        return classInfoList.any { it.name == name }
-    }
+    override fun hasClassInfo(name: String): Boolean = classInfoList.any { it.name == name }
 
-    override fun <R : T> empty(): ScannedClasses<R> {
-        return classInfoListWrapper(ClassInfoList())
-    }
+    override fun <R : T> empty(): ScannedClasses<R> = classInfoListWrapper(ClassInfoList())
 
 
     override fun <R : T> subtypesOf(type: KClass<out R>) = subtypesOf(type.java)
@@ -473,9 +447,7 @@ class ClassInfoListWrapper<T : Any> internal constructor(
     }
 
 
-    override fun filtered(predicate: ClassInfoFilter): ScannedClasses<T> {
-        return classInfoListWrapper(classInfoList.filter(predicate))
-    }
+    override fun filtered(predicate: ClassInfoFilter): ScannedClasses<T> = classInfoListWrapper(classInfoList.filter(predicate))
 
 
     override fun <G : T, P : Any> requireNoGenericClassWithFirstParameter(

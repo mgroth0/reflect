@@ -18,12 +18,10 @@ import kotlin.reflect.jvm.isAccessible
 
 
 abstract class PropReflectingStringableClass : ReflectingStringableClass() {
-    final override fun toStringProps(): Map<String, Any?> {
-        return reflectingToStringProps().associate {
-            it.name to it.apply {
-                isAccessible = true
-            }.getter.call()
-        }
+    final override fun toStringProps(): Map<String, Any?> = reflectingToStringProps().associate {
+        it.name to it.apply {
+            isAccessible = true
+        }.getter.call()
     }
 
     @ExcludeFromPython

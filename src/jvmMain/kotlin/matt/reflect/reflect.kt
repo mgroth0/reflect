@@ -12,15 +12,15 @@ import kotlin.reflect.jvm.isAccessible
 
 
 val KClass<*>.hasNoArgsConstructor
-  get() = noArgConstructor != null
+    get() = noArgConstructor != null
 
 /*straight from createInstance()*/
 val KClass<*>.noArgConstructor
-  get() = constructors.singleOrNull {
-	it.parameters.all(
-	  kotlin.reflect.KParameter::isOptional
-	)
-  }
+    get() = constructors.singleOrNull {
+        it.parameters.all(
+            kotlin.reflect.KParameter::isOptional
+        )
+    }
 
 @Target(AnnotationTarget.CLASS) annotation class ConstructedThroughReflection(val by: KClass<*>)
 
@@ -29,27 +29,27 @@ val KClass<*>.noArgConstructor
 
 
 fun <V: Any?, R: Any?> KFunction<V>.access(op: KFunction<V>.()->R): R {
-  val oldAccessible = this.isAccessible
-  isAccessible = true
-  val r = op(this)
-  isAccessible = oldAccessible
-  return r
+    val oldAccessible = this.isAccessible
+    isAccessible = true
+    val r = op(this)
+    isAccessible = oldAccessible
+    return r
 }
 
 fun <V: Any?, R: Any?> KProperty<V>.access(op: KProperty<V>.()->R): R {
-  val oldAccessible = this.isAccessible
-  isAccessible = true
-  val r = op(this)
-  isAccessible = oldAccessible
-  return r
+    val oldAccessible = this.isAccessible
+    isAccessible = true
+    val r = op(this)
+    isAccessible = oldAccessible
+    return r
 }
 
 fun KProperty0<*>.accessAndGetDelegate() = access {
-  this@accessAndGetDelegate.getDelegate()
+    this@accessAndGetDelegate.getDelegate()
 }
 
 fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
-  this@accessAndGetDelegate.getDelegate(receiver)
+    this@accessAndGetDelegate.getDelegate(receiver)
 }
 
 
@@ -59,10 +59,10 @@ fun <T> KProperty1<T, *>.accessAndGetDelegate(receiver: T) = access {
 
 
 fun <T: Any> KClass<out T>.recurseSealedClasses(): Sequence<KClass<out T>> = sequence {
-  yield(this@recurseSealedClasses)
-  sealedSubclasses.forEach {
-	yieldAll(it.recurseSealedClasses())
-  }
+    yield(this@recurseSealedClasses)
+    sealedSubclasses.forEach {
+        yieldAll(it.recurseSealedClasses())
+    }
 }
 
 fun <T: Any> Sequence<KClass<out T>>.objectInstances() = mapNotNull { it.objectInstance }.toList()

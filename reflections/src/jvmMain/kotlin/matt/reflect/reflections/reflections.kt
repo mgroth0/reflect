@@ -12,7 +12,7 @@ import org.reflections8.Reflections
 import org.reflections8.scanners.MethodAnnotationsScanner
 import org.reflections8.util.ConfigurationBuilder
 import java.lang.reflect.Method
-import java.util.*
+import java.util.Optional
 import kotlin.reflect.KClass
 
 
@@ -26,12 +26,10 @@ class ReflectionsScannerTool(
 
     private val reflectionsCache = mutableMapOf<ReflectionConfig, Reflection>()
 
-    override fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> {
-        return ReflectionConfig(
-            pack = setOf(MATT_PACK),
-            classLoaders = classLoaders.toList()
-        ).reflection().getTypesAnnotationWith(this)
-    }
+    override fun KClass<out Annotation>.annotatedMattJTypes(): Set<Class<*>> = ReflectionConfig(
+        pack = setOf(MATT_PACK),
+        classLoaders = classLoaders.toList()
+    ).reflection().getTypesAnnotationWith(this)
 
     override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> = ReflectionConfig(
         pack = setOf(MATT_PACK),
@@ -58,13 +56,11 @@ class ReflectionsScannerTool(
     @Synchronized
     override fun <T : Any> KClass<T>.subClasses(
         within: Set<Pack>,
-    ): Set<KClass<out T>> {
-        return (run {
-            val cfg = ReflectionConfig(within, classLoaders = classLoaders.toList())
-            val subClasses = cfg.reflection().getSubTypesOf(this)
-            subClasses.toSet()
-        })
-    }
+    ): Set<KClass<out T>> = (run {
+        val cfg = ReflectionConfig(within, classLoaders = classLoaders.toList())
+        val subClasses = cfg.reflection().getSubTypesOf(this)
+        subClasses.toSet()
+    })
 
     override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>): Set<KClass<out T>> {
         TODO()

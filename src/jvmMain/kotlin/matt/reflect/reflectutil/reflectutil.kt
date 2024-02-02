@@ -34,13 +34,9 @@ val Class<*>.kotlinMetadataValue
             KotlinClassHeader.Kind.getById(it as Int)
         }
 
-fun Class<*>.isRegularKotlinClass(): Boolean {
-    return kotlinMetadataValue == CLASS
-}
+fun Class<*>.isRegularKotlinClass(): Boolean = kotlinMetadataValue == CLASS
 
-fun Class<*>.isFileKotlinClass(): Boolean {
-    return kotlinMetadataValue == FILE_FACADE
-}
+fun Class<*>.isFileKotlinClass(): Boolean = kotlinMetadataValue == FILE_FACADE
 
 fun <R : Any> R.classMemberPropertiesPlusInherited() = this::class.memberPropertiesPlusInherited().mapToSet {
     it.attachedTo(this)

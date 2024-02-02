@@ -7,25 +7,25 @@ import kotlin.reflect.KClass
 
 /*13*/
 fun KClass<*>.typeType() = when {
-  objectInstance != null -> ObjectType
-  isFun                  -> FunInterface
-  java.isInterface       -> when {
-	isSealed -> SealedInterface
-	else     -> RegularInterface
-  }
+    objectInstance != null -> ObjectType
+    isFun                  -> FunInterface
+    java.isInterface       -> when {
+        isSealed -> SealedInterface
+        else     -> RegularInterface
+    }
 
-  isData                 -> DataClass
-  isValue                -> ValueClass
-  isInner                -> when {
-	isAbstract -> AbstractInnerClass
-	isOpen     -> OpenInnerClass
-	else       -> FinalInnerClass
-  }
+    isData                 -> DataClass
+    isValue                -> ValueClass
+    isInner                -> when {
+        isAbstract -> AbstractInnerClass
+        isOpen     -> OpenInnerClass
+        else       -> FinalInnerClass
+    }
 
-  isSealed               -> SealedOuterClass
-  isAbstract             -> AbstractOuterClass
-  isOpen                 -> OpenOuterClass
-  else                   -> FinalOuterClass
+    isSealed               -> SealedOuterClass
+    isAbstract             -> AbstractOuterClass
+    isOpen                 -> OpenOuterClass
+    else                   -> FinalOuterClass
 }
 
 //fun KClass<*>.requireIs(typeType: TypeType) {

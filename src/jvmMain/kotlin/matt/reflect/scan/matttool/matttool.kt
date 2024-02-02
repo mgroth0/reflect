@@ -40,9 +40,7 @@ class MattScannerTool(
     }
 
 
-    override fun findClass(qName: JvmQualifiedClassName): KClass<*>? {
-        return findJClass(qName)?.kotlin
-    }
+    override fun findClass(qName: JvmQualifiedClassName): KClass<*>? = findJClass(qName)?.kotlin
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
         TODO()

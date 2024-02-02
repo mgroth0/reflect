@@ -18,9 +18,7 @@ value class Pack(val name: String) {
     }
 
     operator fun get(subName: String) = Pack(name, subName)
-    override fun toString(): String {
-        return name
-    }
+    override fun toString(): String = name
 
     fun asUnixFilePath() = name.replace(".", "/")
 }
