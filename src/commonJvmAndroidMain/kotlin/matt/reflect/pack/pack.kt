@@ -1,7 +1,7 @@
 package matt.reflect.pack
 
 import kotlinx.serialization.Serializable
-import matt.lang.classname.JvmQualifiedClassName
+import matt.lang.classname.common.JvmQualifiedClassName
 import matt.prim.str.hasWhitespace
 import matt.prim.str.joinWithPeriods
 

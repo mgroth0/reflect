@@ -1,4 +1,4 @@
-package matt.reflect.cls
+package matt.reflect.cls.common
 
 /*13*/
 sealed interface TypeType

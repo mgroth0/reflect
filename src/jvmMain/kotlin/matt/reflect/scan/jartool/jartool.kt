@@ -1,12 +1,12 @@
 package matt.reflect.scan.jartool
 
-import matt.classload.Jar
-import matt.classload.useJarClassGetter
+import matt.classload.j.useJarClassGetter
+import matt.classload.ja.Jar
 import matt.collect.mapToSet
-import matt.lang.classname.JvmQualifiedClassName
+import matt.lang.classname.common.JvmQualifiedClassName
 import matt.lang.model.file.AnyFsFile
 import matt.reflect.pack.Pack
-import matt.reflect.scan.ClassScannerTool
+import matt.reflect.scan.jcommon.ClassScannerTool
 import java.lang.reflect.Method
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
@@ -37,9 +37,10 @@ class JarScannerTool(
         require(within != null && within.isNotEmpty()) {
             TODO("can within be null or empty here? not sure")
         }
-        val withins = within.mapToSet {
-            "${it.asUnixFilePath().also { require(!it.endsWith("/")) }}/"
-        }
+        val withins =
+            within.mapToSet {
+                "${it.asUnixFilePath().also { require(!it.endsWith("/")) }}/"
+            }
 
         jarFile.use { jarFile ->
             return jarFile.entries().asSequence().mapNotNullTo(mutableSetOf()) { jarEntry ->
@@ -48,9 +49,10 @@ class JarScannerTool(
                     && !jarEntry.name.endsWith("module-info.class")
                     && withins.any { jarEntry.name.startsWith(it) }
                 ) {
-                    val className: String = jarEntry.name
-                        .replace("/", ".")
-                        .removeSuffix(".class")
+                    val className: String =
+                        jarEntry.name
+                            .replace("/", ".")
+                            .removeSuffix(".class")
                     JvmQualifiedClassName(className)
                 } else null
             }

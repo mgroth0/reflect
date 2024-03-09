@@ -1,8 +1,7 @@
 package matt.reflect.weak
 
 import matt.lang.delegation.provider
-import matt.lang.weak.MyWeakRef
-import matt.lang.weak.WeakRefInter
+import matt.lang.weak.common.WeakRefInter
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.primaryConstructor
@@ -23,14 +22,15 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
     final override fun deref(): T? {
 
 
-        val success = weakRefs.values.all {
-            it.tryDeref()
-        }
+        val success =
+            weakRefs.values.all {
+                it.tryDeref()
+            }
 
         return if (success) {
             val ensured = theConstructor.call()
             ensured.weakRefs.values.forEach {
-                it.tempRef = this.weakRefs[it.name]!!.tempRef!!
+                it.tempRef = weakRefs[it.name]!!.tempRef!!
                 it.name
             }
             @Suppress("UNCHECKED_CAST")
@@ -41,17 +41,16 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
             }
             null
         }
-
-
     }
 
-    protected fun <T: Any> weak() = provider {
-        WeakProp<T>(it)
-    }
+    protected fun <T: Any> weak() =
+        provider {
+            WeakProp<T>(it)
+        }
 
     protected inner class WeakProp<T: Any>(val name: String): ReadWriteProperty<Any?, T> {
 
-        internal var wref: MyWeakRef<T>? = null
+        internal var wref: WeakRefInter<T>? = null
 
         internal var tempRef: Any? = null
 
@@ -71,13 +70,11 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
         }
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            wref = MyWeakRef(value)
+            wref = matt.lang.weak.weak(value)
         }
 
         init {
             weakRefs[name] = this
         }
-
     }
-
 }

@@ -1,8 +1,8 @@
 package matt.reflect.scan.matttool
 
-import matt.lang.classname.JvmQualifiedClassName
+import matt.lang.classname.common.JvmQualifiedClassName
 import matt.reflect.pack.Pack
-import matt.reflect.scan.ClassScannerTool
+import matt.reflect.scan.jcommon.ClassScannerTool
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 
@@ -55,5 +55,4 @@ class MattScannerTool(
         }
         return null
     }
-
 }

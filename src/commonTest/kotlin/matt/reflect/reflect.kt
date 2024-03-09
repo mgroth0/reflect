@@ -10,8 +10,6 @@ class CommonReflectTests {
     fun simpleClassName() {
         assertEquals(Int::class.firstSimpleName(), "Int")
     }
-
-
 }
 
 

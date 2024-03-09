@@ -11,16 +11,16 @@ import io.github.classgraph.ScanResult
 import matt.lang.anno.NotSynchronizedForPerformance
 import matt.lang.anno.SeeURL
 import matt.lang.assertions.require.requireNot
-import matt.lang.classname.JvmQualifiedClassName
-import matt.lang.classname.jvmQualifiedClassName
+import matt.lang.classname.common.JvmQualifiedClassName
+import matt.lang.classname.j.jvmQualifiedClassName
 import matt.lang.shutdown.ShutdownContext
-import matt.lang.shutdown.closingAtShutdown
+import matt.lang.shutdown.j.closingAtShutdown
 import matt.reflect.pack.MATT_PACK
 import matt.reflect.pack.Pack
-import matt.reflect.scan.ClassScannerTool
-import matt.reflect.scan.DEFAULT_INIT_CLASSES
 import matt.reflect.scan.classgraph.ClassGraphW.Annotations
 import matt.reflect.scan.classgraph.ClassGraphW.Methods
+import matt.reflect.scan.jcommon.ClassScannerTool
+import matt.reflect.scan.jcommon.DEFAULT_INIT_CLASSES
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.kotlinFunction
@@ -31,39 +31,43 @@ class ClassGraphScannerTool(
     internal val includeParentClassloaders: Boolean
 ) : ClassScannerTool {
 
-    override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> = classGraph {
-        packs += MATT_PACK
-        details += Annotations
-        details += Methods
-    }.closingScan {
-        classesWithMethodAnnotation(this@annotatedMattJFunctions).methods().withAnnotation(this@annotatedMattJFunctions)
-            .load()
-    }
-
-    override fun KClass<out Annotation>.annotatedMattJTypes() = classGraph {
-        packs += MATT_PACK
-        details += Annotations
-    }.closingScan {
-        classesWithAnnotation(this@annotatedMattJTypes).load()
-    }
-
-    override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>) = classGraph {
-        within.forEach {
-            packs += it
+    override fun KClass<out Annotation>.annotatedMattJFunctions(): Set<Method> =
+        classGraph {
+            packs += MATT_PACK
+            details += Annotations
+            details += Methods
+        }.closingScan {
+            classesWithMethodAnnotation(this@annotatedMattJFunctions).methods().withAnnotation(this@annotatedMattJFunctions)
+                .load()
         }
-        details += Annotations
-    }.closingScan {
-        subtypesOf(this@subClasses).loadKotlin()
-    }
 
-    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>) = classGraph {
-        within.forEach {
-            packs += it
+    override fun KClass<out Annotation>.annotatedMattJTypes() =
+        classGraph {
+            packs += MATT_PACK
+            details += Annotations
+        }.closingScan {
+            classesWithAnnotation(this@annotatedMattJTypes).load()
         }
-        details += Annotations
-    }.closingScan {
-        mostConcreteTypesOf(this@mostConcreteTypes).loadKotlin()
-    }
+
+    override fun <T : Any> KClass<T>.subClasses(within: Set<Pack>) =
+        classGraph {
+            within.forEach {
+                packs += it
+            }
+            details += Annotations
+        }.closingScan {
+            subtypesOf(this@subClasses).loadKotlin()
+        }
+
+    override fun <T : Any> KClass<T>.mostConcreteTypes(within: Set<Pack>) =
+        classGraph {
+            within.forEach {
+                packs += it
+            }
+            details += Annotations
+        }.closingScan {
+            mostConcreteTypesOf(this@mostConcreteTypes).loadKotlin()
+        }
 
     override fun classNames(within: Set<Pack>?): Set<JvmQualifiedClassName> {
         TODO()
@@ -72,22 +76,24 @@ class ClassGraphScannerTool(
     override fun allClasses(
         within: Set<Pack>,
         initializeClasses: Boolean
-    ): Set<Class<*>> = classGraph {
-        within.forEach {
-            packs += it
-        }
-        /*details += Annotations*/
-        if (initializeClasses) initClasses()
-    }.closingScan {
-        this.all().load()
-    }.toSet()
+    ): Set<Class<*>> =
+        classGraph {
+            within.forEach {
+                packs += it
+            }
+            /*details += Annotations*/
+            if (initializeClasses) initClasses()
+        }.closingScan {
+            all().load()
+        }.toSet()
 
-    override fun findClass(qName: JvmQualifiedClassName) = classGraph {
-        packs += MATT_PACK
-        details += Annotations
-    }.closingScan {
-        find(qName)?.loadKotlin()
-    }
+    override fun findClass(qName: JvmQualifiedClassName) =
+        classGraph {
+            packs += MATT_PACK
+            details += Annotations
+        }.closingScan {
+            find(qName)?.loadKotlin()
+        }
 
     override fun referencedClasses(): Set<JvmQualifiedClassName> {
         TODO()
@@ -105,20 +111,18 @@ class ClassGraphScannerTool(
     fun <T1 : Any, T2 : Any> requireNoneAreBoth(
         class1: Class<T1>,
         class2: Class<T2>,
-        pack: Pack,
+        pack: Pack
     ) {
         classGraph {
             packs += pack
         }.closingScan {
             requireNoneAreBoth(class1, class2)
         }
-
-
     }
 
 
     inline fun <reified G : Any, reified P : Any> requireNoGenericClassWithFirstParameter(
-        pack: Pack,
+        pack: Pack
     ) = requireNoGenericClassWithFirstParameter(
         G::class.java, P::class.java, pack
     )
@@ -126,7 +130,7 @@ class ClassGraphScannerTool(
     fun <G : Any, P : Any> requireNoGenericClassWithFirstParameter(
         genericClass: Class<G>,
         badParameter: Class<P>,
-        pack: Pack,
+        pack: Pack
 
     ) {
         classGraph {
@@ -134,8 +138,6 @@ class ClassGraphScannerTool(
         }.closingScan {
 
             subtypesOf(genericClass).requireNoGenericClassWithFirstParameter(genericClass, badParameter)
-
-
         }
     }
 }
@@ -166,8 +168,6 @@ class ClassGraphW internal constructor(
     @SeeURL("https://github.com/classgraph/classgraph/issues/795")
     private var classGraph: ClassGraph =
         ClassGraph().overrideClassLoaders(*classLoaders).enableClassInfo().enableMemoryMapping()
-
-
             /*
 
             I do not know why I enabled this by default. I searched usages, and I cannot find anywhere where it would currently make sense to have this enabled.
@@ -176,10 +176,9 @@ class ClassGraphW internal constructor(
 
             .enableExternalClasses()
              */
-
-
             .ignoreClassVisibility().let {
-                if (includeParentClassloaders) {/*SystemJarsAndModules is disabled by default. If I am "including parents", logical by that I mean to include platform classes */
+                if (includeParentClassloaders) {
+                    /*SystemJarsAndModules is disabled by default. If I am "including parents", logical by that I mean to include platform classes */
                     it.enableSystemJarsAndModules()
                 } else {
                     if (classLoaders.size == 1) {
@@ -193,11 +192,8 @@ class ClassGraphW internal constructor(
                     } else {
                         error("not sure what exactly to do here yet")
                     }
-
                 }
             }
-
-
             .disableModuleScanning()
 
 
@@ -211,12 +207,13 @@ class ClassGraphW internal constructor(
 
     inner class Details {
         operator fun plusAssign(detail: Detail) {
-            classGraph = when (detail) {
-                Annotations -> classGraph.enableAnnotationInfo()
-                Methods     -> classGraph.enableMethodInfo().ignoreMethodVisibility()
-                Fields      -> classGraph.enableFieldInfo().ignoreFieldVisibility()
-                All         -> classGraph.enableAllInfo()
-            }
+            classGraph =
+                when (detail) {
+                    Annotations -> classGraph.enableAnnotationInfo()
+                    Methods     -> classGraph.enableMethodInfo().ignoreMethodVisibility()
+                    Fields      -> classGraph.enableFieldInfo().ignoreFieldVisibility()
+                    All         -> classGraph.enableAllInfo()
+                }
         }
     }
 
@@ -240,7 +237,6 @@ class ClassGraphW internal constructor(
     fun scanAndCloseAtShutdown() = openScan().closingAtShutdown()
 
     private fun openScan() = ScanResultWrapper(classGraph.scan())
-
 }
 
 
@@ -268,7 +264,6 @@ interface ScannedClasses<T : Any> : Collection<ClassInfo> {
     fun hasClassInfo(name: String): Boolean
 
     fun <R: T> empty(): ScannedClasses<R>
-
 }
 
 fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(
@@ -277,9 +272,10 @@ fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(
     if (!hasClassInfo(type.qualifiedName!!)) {
         return empty()
     }
-    val r = subtypesOf(type).filtered {
-        it.subclasses.isEmpty() && it.classesImplementing.isEmpty()
-    }
+    val r =
+        subtypesOf(type).filtered {
+            it.subclasses.isEmpty() && it.classesImplementing.isEmpty()
+        }
     return if (r.isEmpty()) {
         scannedClassesOf(type)
     } else r
@@ -325,15 +321,22 @@ abstract class ScannedClassesBase<T : Any> : ScannedClasses<T> {
     }
 
     protected abstract val scan: ScanResultWrapper
-    final override fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> = ClassInfoListWrapper(
-        ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }), scan
-    )
+    final override fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> =
+        ClassInfoListWrapper(
+            ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }), scan
+        )
 }
 
 
 @NotSynchronizedForPerformance
-class ScanResultWrapper internal constructor(val scanResult: ScanResult) : ScannedClassesBase<Any>(), AutoCloseable {
-    fun classesWithMethodAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithMethodAnnotation(annotation.java))
+class ScanResultWrapper internal constructor(private val scanResult: ScanResult) : ScannedClassesBase<Any>(), AutoCloseable {
+
+    fun enumClasses(): ClassInfoListWrapper<Enum<*>> = classInfoListWrapper(scanResult.allEnums)
+
+
+    fun classesWithMethodAnnotation(
+        annotation: KClass<out Annotation>
+    ): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithMethodAnnotation(annotation.java))
 
     fun classesWithAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithAnnotation(annotation.java))
 
@@ -342,13 +345,14 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
     override fun <R : Any> subtypesOf(type: Class<out R>): ClassInfoListWrapper<R> = classInfoListWrapper(cachedSubtypesOf(type))
 
     @NotSynchronizedForPerformance
-    internal fun <R : Any> cachedSubtypesOf(type: Class<out R>): ClassInfoList = cachedSubTypes.getOrPut(type.name) {
-        if (type.isInterface) {
-            scanResult.getClassesImplementing(type)
-        } else {
-            scanResult.getSubclasses(type)
+    internal fun <R : Any> cachedSubtypesOf(type: Class<out R>): ClassInfoList =
+        cachedSubTypes.getOrPut(type.name) {
+            if (type.isInterface) {
+                scanResult.getClassesImplementing(type)
+            } else {
+                scanResult.getSubclasses(type)
+            }
         }
-    }
 
     @NotSynchronizedForPerformance
     private val cachedSubTypes = mutableMapOf<String, ClassInfoList>()
@@ -397,7 +401,6 @@ class ScanResultWrapper internal constructor(val scanResult: ScanResult) : Scann
     override fun close() {
         scanResult.close()
     }
-
 }
 
 private tailrec fun getTypeParamValue(
@@ -423,7 +426,7 @@ private tailrec fun getTypeParamValue(
 
 class ClassInfoListWrapper<T : Any> internal constructor(
     private val classInfoList: ClassInfoList,
-    override val scan: ScanResultWrapper,
+    override val scan: ScanResultWrapper
 ) : List<ClassInfo> by classInfoList, ScannedClassesBase<T>() {
 
 
@@ -465,11 +468,12 @@ class ClassInfoListWrapper<T : Any> internal constructor(
                 val typeSig = (it.typeSignature) ?: return@forEach
 
                 /*it is recursive already! phew!*/
-                val theParam = typeSig
-                    .superinterfaceSignatures
-                    .first {
-                        it.baseClassName == className1
-                    }.typeArguments.first()
+                val theParam =
+                    typeSig
+                        .superinterfaceSignatures
+                        .first {
+                            it.baseClassName == className1
+                        }.typeArguments.first()
 
 
                 val aSet = mutableSetOf<String>()
@@ -481,8 +485,6 @@ class ClassInfoListWrapper<T : Any> internal constructor(
                         "expected type parameter to not be $className2"
                     }
                 }
-
-
             }
         } else {
             theSubTypes.forEach {
@@ -492,22 +494,21 @@ class ClassInfoListWrapper<T : Any> internal constructor(
                 val candidateSignature = typeSig.superclassSignature
 
 
-                val paramValue = getTypeParamValue(
-                    next = candidateSignature, targetClassName = class1.name, getClassInfo = scan::getClassInfo
-                )
+                val paramValue =
+                    getTypeParamValue(
+                        next = candidateSignature, targetClassName = class1.name, getClassInfo = scan::getClassInfo
+                    )
 
 
                 require(className2 != paramValue) {
                     "expected type parameter to not be $className2 "
                 }
-
             }
         }
     }
 
     private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
         ClassInfoListWrapper<T>(classInfoList, scan = scan)
-
 }
 
 private fun Sequence<MethodInfoList>.wrap() = MethodInfoWrapper(flatMap { it })
@@ -521,7 +522,6 @@ class MethodInfoWrapper internal constructor(private val methodInfos: Sequence<M
 
     fun load(): Set<Method> = methodInfos.map { it.loadClassAndGetMethod() }.toSet()
     fun loadKotlin() = load().mapTo(mutableSetOf()) { it.kotlinFunction }
-
 }
 
 private fun ClassInfo.loadKotlin(): KClass<out Any> = loadClass().kotlin

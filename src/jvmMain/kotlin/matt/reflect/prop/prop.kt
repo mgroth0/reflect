@@ -21,7 +21,6 @@ abstract class KPropertyWrapperBase<T>(protected val property: KProperty<T>) : K
             didSetAccessible = true
         }
     }
-
 }
 
 class DetachedKPropertyWrapper<R, T>(property: KProperty<T>) : KPropertyWrapperBase<T>(property) {
