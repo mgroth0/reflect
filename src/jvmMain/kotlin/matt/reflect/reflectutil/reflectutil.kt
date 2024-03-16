@@ -1,12 +1,10 @@
 package matt.reflect.reflectutil
 
-import matt.collect.filterToSet
 import matt.collect.itr.recurse.recurse
 import matt.collect.mapToSet
 import matt.lang.anno.SeeURL
 import matt.lang.classname.common.JvmQualifiedClassName
 import matt.lang.classname.j.jvmQualifiedClassName
-import matt.reflect.prop.AttachedKProperty
 import matt.reflect.prop.DetachedKPropertyWrapper
 import matt.reflect.prop.KPropertyWrapper
 import java.lang.reflect.Method
@@ -45,20 +43,20 @@ fun <R : Any> R.classMemberPropertiesPlusInherited() =
     }
 
 fun <R : Any> KClass<out R>.memberPropertiesPlusInherited() =
-    recurse(includeSelf = true) {
-        @Suppress("UNCHECKED_CAST")
-        it.superclasses as List<KClass<out R>>
+    (this as KClass<*>).recurse(includeSelf = true) {
+        it.superclasses
     }.flatMapTo(mutableSetOf()) {
         it.memberProperties
     }.mapToSet { DetachedKPropertyWrapper<R, Any?>(it) }
 
+/*
 @Suppress("ForbiddenAnnotation")
 @JvmName("filterReturnsToSet1")
 inline fun <reified T> Set<KPropertyWrapper<*>>.filterReturnsToSet() =
     filterToSet {
         it.returns<T>()
     }.mapToSet {
-        @Suppress("UNCHECKED_CAST")
+
         it as KPropertyWrapper<T>
     }
 
@@ -68,18 +66,20 @@ inline fun <R, reified T> Set<DetachedKPropertyWrapper<R, *>>.filterReturnsToSet
     filterToSet {
         it.returns<T>()
     }.mapToSet {
-        @Suppress("UNCHECKED_CAST")
+
         it as DetachedKPropertyWrapper<R, T>
     }
+
+
 @Suppress("ForbiddenAnnotation")
 @JvmName("filterReturnsToSet3")
 inline fun <R, reified T> Set<AttachedKProperty<R, *>>.filterReturnsToSet() =
     filterToSet {
         it.returns<T>()
     }.mapToSet {
-        @Suppress("UNCHECKED_CAST")
+
         it as AttachedKProperty<R, T>
-    }
+    }*/
 
 inline fun <reified T> KPropertyWrapper<*>.returns() = returnType.isSubtypeOf(typeOf<T>())
 

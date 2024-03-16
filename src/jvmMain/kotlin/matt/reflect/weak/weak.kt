@@ -3,20 +3,21 @@ package matt.reflect.weak
 import matt.lang.delegation.provider
 import matt.lang.weak.common.WeakRefInter
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.cast
 
 
 abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
 
     private val weakRefs = mutableMapOf<String, WeakProp<*>>()
 
-    private val theConstructor by lazy {
+  /*  private val theConstructor by lazy {
         this::class.primaryConstructor!!.apply {
             isAccessible = true
         }
-    }
+    }*/
+    protected abstract fun constructNew(): T
 
     @Synchronized
     final override fun deref(): T? {
@@ -28,13 +29,13 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
             }
 
         return if (success) {
-            val ensured = theConstructor.call()
+            val ensured = constructNew()
             ensured.weakRefs.values.forEach {
-                it.tempRef = weakRefs[it.name]!!.tempRef!!
+                it.setTheTempRef(weakRefs[it.name]!!.tempRef!!)
                 it.name
             }
-            @Suppress("UNCHECKED_CAST")
-            ensured as T
+
+            ensured
         } else {
             weakRefs.values.forEach {
                 it.tempRef = null
@@ -43,16 +44,20 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
         }
     }
 
-    protected fun <T: Any> weak() =
+    protected inline fun <reified T: Any> weak() =
         provider {
-            WeakProp<T>(it)
+            WeakProp<T>(it, T::class)
         }
 
-    protected inner class WeakProp<T: Any>(val name: String): ReadWriteProperty<Any?, T> {
+    protected inner class WeakProp<T: Any>(val name: String, private val cls: KClass<T>): ReadWriteProperty<Any?, T> {
 
         internal var wref: WeakRefInter<T>? = null
 
-        internal var tempRef: Any? = null
+        internal fun setTheTempRef(any: Any) {
+            tempRef = cls.cast(any)
+        }
+
+        internal var tempRef: T? = null
 
         internal fun tryDeref(): Boolean {
             val t = wref!!.deref()
@@ -64,10 +69,7 @@ abstract class WeakThing<T: WeakThing<T>>: WeakRefInter<T>() {
             }
         }
 
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            @Suppress("UNCHECKED_CAST")
-            return tempRef as T
-        }
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T = tempRef as T
 
         override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
             wref = matt.lang.weak.weak(value)

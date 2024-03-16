@@ -1,4 +1,3 @@
-
 package matt.reflect.tostring
 
 import matt.lang.jpy.ExcludeFromPython

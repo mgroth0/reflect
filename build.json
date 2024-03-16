@@ -11,7 +11,7 @@
   "dependencies": [
     {
       "type": "Lib",
-      "cfg": "commonJvmAndroidMainApi",
+      "cfg": "commonMainApi",
       "key": "kt-reflect"
     },
     {

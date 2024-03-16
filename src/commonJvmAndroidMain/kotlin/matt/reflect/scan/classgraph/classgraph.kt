@@ -221,7 +221,7 @@ class ClassGraphW internal constructor(
 
     inner class Packs {
         operator fun plusAssign(pack: Pack) {
-            classGraph = classGraph.acceptPackages("${pack.name}.*")
+            classGraph = classGraph.acceptPackages(pack.name, "${pack.name}.*")
         }
     }
 
@@ -241,8 +241,8 @@ class ClassGraphW internal constructor(
 
 
 interface ScannedClasses<T : Any> : Collection<ClassInfo> {
-    fun <R : T> subtypesOf(type: KClass<out R>): ScannedClasses<R>
-    fun <R : T> subtypesOf(type: Class<out R>): ScannedClasses<R>
+    fun <R : T> subtypesOf(type: KClass<R>): ScannedClasses<R>
+    fun <R : T> subtypesOf(type: Class<R>): ScannedClasses<R>
 
     fun filtered(predicate: ClassInfoFilter): ScannedClasses<T>
     fun <T1 : T, T2 : T> requireNoneAreBoth(
@@ -257,29 +257,43 @@ interface ScannedClasses<T : Any> : Collection<ClassInfo> {
         excludeClassNames: Set<String> = DEFAULT_EXCLUDE_CLASS_NAMES
     )
 
-    fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R>
+    /*fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R>*/
 
     fun loadKotlin(): Set<KClass<out T>>
 
     fun hasClassInfo(name: String): Boolean
 
-    fun <R: T> empty(): ScannedClasses<R>
+    fun empty(): ScannedClasses<T>
+    fun <R: T> empty(cls: KClass<R>): ScannedClasses<R>
 }
 
-fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(
-    type: KClass<out R>
-): ScannedClasses<R> {
-    if (!hasClassInfo(type.qualifiedName!!)) {
-        return empty()
+inline fun <T : Any, reified R : T> ScannedClasses<T>.mostConcreteTypesOf(): ScannedClasses<R> {
+    if (!hasClassInfo(R::class.qualifiedName!!)) {
+        return empty(R::class)
     }
     val r =
-        subtypesOf(type).filtered {
+        subtypesOf(R::class).filtered {
             it.subclasses.isEmpty() && it.classesImplementing.isEmpty()
         }
     return if (r.isEmpty()) {
-        scannedClassesOf(type)
+        (this as ScannedClassesBase<*>).scannedClassesOf<R>(upperBound = R::class, R::class)
     } else r
 }
+fun <T : Any, R : T> ScannedClasses<T>.mostConcreteTypesOf(
+    outputType: KClass<R>
+): ScannedClasses<R> {
+    if (!hasClassInfo(outputType.qualifiedName!!)) {
+        return empty(outputType)
+    }
+    val r =
+        subtypesOf(outputType).filtered {
+            it.subclasses.isEmpty() && it.classesImplementing.isEmpty()
+        }
+    return if (r.isEmpty()) {
+        (this as ScannedClassesBase<*>).scannedClassesOf<R>(upperBound = outputType, outputType)
+    } else r
+}
+
 
 inline fun <reified T1 : Any, reified T2 : Any> ScannedClasses<Any>.requireNoneAreBoth(
     excludeClassName: String? = DEFAULT_EXCLUDE_CLASS_NAME
@@ -319,13 +333,23 @@ abstract class ScannedClassesBase<T : Any> : ScannedClasses<T> {
             }
         }
     }
-
-    protected abstract val scan: ScanResultWrapper
-    final override fun <R : Any> scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> =
-        ClassInfoListWrapper(
-            ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }), scan
-        )
+    @PublishedApi
+    internal abstract val scan: ScanResultWrapper
 }
+inline fun <reified R : Any> ScannedClassesBase<*>.scannedClassesOf(vararg classes: KClass<out R>): ScannedClasses<R> =
+    scannedClassesOf(
+        upperBound = R::class,
+        *classes
+    )
+fun <R : Any> ScannedClassesBase<*>.scannedClassesOf(
+    upperBound: KClass<R>,
+    vararg classes: KClass<out R>
+): ScannedClasses<R> =
+    ClassInfoListWrapper(
+        ClassInfoList(classes.map { scan.getClassInfo(it.jvmQualifiedClassName.name) }),
+        scan,
+        upperBound
+    )
 
 
 @NotSynchronizedForPerformance
@@ -341,8 +365,15 @@ class ScanResultWrapper internal constructor(private val scanResult: ScanResult)
     fun classesWithAnnotation(annotation: KClass<out Annotation>): ClassInfoListWrapper<Any> = classInfoListWrapper(scanResult.getClassesWithAnnotation(annotation.java))
 
 
-    override fun <R : Any> subtypesOf(type: KClass<out R>) = subtypesOf<R>(type.java)
-    override fun <R : Any> subtypesOf(type: Class<out R>): ClassInfoListWrapper<R> = classInfoListWrapper(cachedSubtypesOf(type))
+    override fun <R : Any> subtypesOf(type: KClass<R>): ScannedClasses<R> =
+        subtypesOf<R>(
+            type.java
+        )
+    override fun <R : Any> subtypesOf(type: Class<R>): ClassInfoListWrapper<R> =
+        classInfoListWrapper(
+            cachedSubtypesOf(type),
+            type.kotlin
+        )
 
     @NotSynchronizedForPerformance
     internal fun <R : Any> cachedSubtypesOf(type: Class<out R>): ClassInfoList =
@@ -384,12 +415,16 @@ class ScanResultWrapper internal constructor(private val scanResult: ScanResult)
     override fun iterator(): Iterator<ClassInfo> = all().iterator()
 
 
-    private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
-        ClassInfoListWrapper<T>(classInfoList, scan = this)
+    private inline fun <reified T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
+        ClassInfoListWrapper<T>(classInfoList, scan = this, T::class)
+    private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList, cls: KClass<T>) =
+        ClassInfoListWrapper<T>(classInfoList, scan = this, cls)
 
     override fun hasClassInfo(name: String) = scanResult.getClassInfo(name) != null
-    override fun <R : Any> empty(): ScannedClasses<R> = classInfoListWrapper(ClassInfoList())
+    override fun empty(): ScannedClasses<Any> = classInfoListWrapper(ClassInfoList())
+    override fun <R : Any> empty(cls: KClass<R>): ScannedClasses<R> = classInfoListWrapper(ClassInfoList(), cls)
 
+    @PublishedApi
     internal fun getClassInfo(name: String) = scanResult.getClassInfo(name) ?: error("No class found with name $name")
 
     override fun <G : Any, P : Any> requireNoGenericClassWithFirstParameter(
@@ -424,33 +459,39 @@ private tailrec fun getTypeParamValue(
 }
 
 
-class ClassInfoListWrapper<T : Any> internal constructor(
+class ClassInfoListWrapper<T : Any> @PublishedApi internal constructor(
     private val classInfoList: ClassInfoList,
-    override val scan: ScanResultWrapper
+    override val scan: ScanResultWrapper,
+    private val superClass: KClass<T>
 ) : List<ClassInfo> by classInfoList, ScannedClassesBase<T>() {
 
 
 
     fun methods() = classInfoList.asSequence().map { it.methodInfo }.wrap()
 
-    @Suppress("UNCHECKED_CAST")
-    fun load(): Set<Class<out T>> = classInfoList.loadClasses().toSet() as Set<Class<out T>>
+
+    fun load(): Set<Class<out T>> {
+        val loaded = classInfoList.loadClasses(superClass.java)
+        val asSet = loaded.toSet()
+        return asSet
+    }
 
 
     override fun loadKotlin() = load().mapTo(mutableSetOf()) { it.kotlin }
     override fun hasClassInfo(name: String): Boolean = classInfoList.any { it.name == name }
 
-    override fun <R : T> empty(): ScannedClasses<R> = classInfoListWrapper(ClassInfoList())
+    override fun empty(): ScannedClasses<T> = classInfoListWrapper(ClassInfoList(), superClass)
+    override fun <R : T> empty(cls: KClass<R>): ScannedClasses<R> = classInfoListWrapper(ClassInfoList(), cls)
 
 
-    override fun <R : T> subtypesOf(type: KClass<out R>) = subtypesOf(type.java)
-    override fun <R : T> subtypesOf(type: Class<out R>): ClassInfoListWrapper<R> {
+    override fun <R : T> subtypesOf(type: KClass<R>) = subtypesOf(type.java)
+    override fun <R : T> subtypesOf(type: Class<R>): ClassInfoListWrapper<R> {
         val cachedSubTypes = scan.cachedSubtypesOf(type)
-        return classInfoListWrapper(cachedSubTypes.intersect(classInfoList))
+        return classInfoListWrapper(cachedSubTypes.intersect(classInfoList), type.kotlin)
     }
 
 
-    override fun filtered(predicate: ClassInfoFilter): ScannedClasses<T> = classInfoListWrapper(classInfoList.filter(predicate))
+    override fun filtered(predicate: ClassInfoFilter): ScannedClasses<T> = classInfoListWrapper(classInfoList.filter(predicate), superClass)
 
 
     override fun <G : T, P : Any> requireNoGenericClassWithFirstParameter(
@@ -507,8 +548,10 @@ class ClassInfoListWrapper<T : Any> internal constructor(
         }
     }
 
-    private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
-        ClassInfoListWrapper<T>(classInfoList, scan = scan)
+    private inline fun <reified T : Any> classInfoListWrapper(classInfoList: ClassInfoList) =
+        ClassInfoListWrapper<T>(classInfoList, scan = scan, T::class)
+    private fun <T : Any> classInfoListWrapper(classInfoList: ClassInfoList, cls: KClass<T>) =
+        ClassInfoListWrapper<T>(classInfoList, scan = scan, cls)
 }
 
 private fun Sequence<MethodInfoList>.wrap() = MethodInfoWrapper(flatMap { it })
